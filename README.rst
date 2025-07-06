@@ -72,7 +72,8 @@ the command::
 
     sudo apt install virtualenvwrapper python3-dev libassimp-dev libavcodec-dev libavformat-dev \
         libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
-        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev pkg-config
+        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev pkg-config \
+        python3-legacy-cgi zenity python3-tk
 
 Ren'Py requires SDL_image 2.6 or greater. If your distribution doesn't include
 that version, you'll need to download it from:
@@ -92,7 +93,11 @@ To return to this virtualenv later, run::
 
 After activating the virtualenv, install additional dependencies::
 
-    pip install -U setuptools cython future six typing pefile requests ecdsa
+    pip install -U setuptools cython future six typing pefile requests ecdsa assimp legacy-cgi
+
+For Chinese users, please append the mirror source address at the end to speed up the download::
+
+    -i https://mirrors.aliyun.com/pypi/simple/
 
 Then, install pygame_sdl2 by running the following commands::
 
@@ -101,9 +106,13 @@ Then, install pygame_sdl2 by running the following commands::
     python setup.py install
     popd
 
-Finally, use setup.py to compile extension modules that support Ren'Py::
+Using setup.py to compile extension modules that support Ren'Py::
 
     python setup.py install
+
+Finally, compile cslots in activated virtualenv::
+
+    cd experimental/cslots/ && python setup.py install
 
 Ren'Py will be installed into the activated virtualenv. It can then be run
 using the command::
