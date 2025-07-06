@@ -106,13 +106,9 @@ Then, install pygame_sdl2 by running the following commands::
     python setup.py install
     popd
 
-Using setup.py to compile extension modules that support Ren'Py::
+Finally, use setup.py to compile extension modules that support Ren'Py::
 
     python setup.py install
-
-Finally, compile cslots in activated virtualenv::
-
-    cd experimental/cslots/ && python setup.py install
 
 Ren'Py will be installed into the activated virtualenv. It can then be run
 using the command::
