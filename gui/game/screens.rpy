@@ -246,14 +246,19 @@ screen quick_menu():
             style_prefix "quick"
             style "quick_menu"
 
-            textbutton _("Back") action Rollback()
-            textbutton _("History") action ShowMenu('history')
-            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
-            textbutton _("Auto") action Preference("auto-forward", "toggle")
+            ##textbutton _("Back") action Rollback()
             textbutton _("Save") action ShowMenu('save')
+            textbutton _("Load") action ShowMenu('load')
             textbutton _("Q.Save") action QuickSave()
             textbutton _("Q.Load") action QuickLoad()
             textbutton _("Prefs") action ShowMenu('preferences')
+            textbutton _("History") action ShowMenu('history')
+            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
+            textbutton _("Auto") action Preference("auto-forward", "toggle")
+            textbutton -("Home") action MainMenu(confirm=True)
+            textbutton _("Exit") action Quit(confirm=True)
+            textbutton -("Hide") action Function(renpy.iconify)
+            
 
 
 ## This code ensures that the quick_menu screen is displayed in-game, whenever
@@ -321,15 +326,11 @@ screen navigation():
 
         textbutton _("About") action ShowMenu("about")
 
-        if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
+        ## Help isn't necessary or relevant to mobile devices.
+        textbutton _("Help") action ShowMenu("help")
 
-            ## Help isn't necessary or relevant to mobile devices.
-            textbutton _("Help") action ShowMenu("help")
-
-        if renpy.variant("pc"):
-
-            ## The quit button is banned on iOS and unnecessary on Android and Web.
-            textbutton _("Quit") action Quit(confirm=not main_menu)
+        ## The quit button is banned on iOS and unnecessary on Android and Web.
+        textbutton _("Quit") action Quit(confirm=not main_menu)
 
 
 style navigation_button is gui_button
