@@ -652,6 +652,8 @@ screen file_slots(title):
 
                         key "save_delete" action FileDelete(slot)
 
+                        textbutton "delete" action FileDelete(slot) style "gui_button" xpos .35 ypos -.2
+
             ## Buttons to access other pages.
             vbox:
                 style_prefix "page"
@@ -674,7 +676,7 @@ screen file_slots(title):
                         textbutton _("{#quick_page}Q") action FilePage("quick")
 
                     ## range(1, 10) gives the numbers from 1 to 9.
-                    for page in range(1, 10):
+                    for page in range(1, 13):
                         textbutton "[page]" action FilePage(page)
 
                     textbutton _(">") action FilePageNext()
