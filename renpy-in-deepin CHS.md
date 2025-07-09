@@ -37,8 +37,8 @@
 `cd ~/Desktop && mkdir renpy-box`
 
 回到renpy文件夹，复制.git renpy renpy.py这三样：
-pushd renpy && cp -R .git renpy renpy.py ~/Desktop/renpy-box
-> .git用于检验renpy的，renpy文件夹包含了运行游戏所需脚本，renpy.py负责启动游戏
+`pushd renpy && cp -R .git renpy renpy.py ~/Desktop/renpy-box`
+> .git用于检验renpy版本（?），renpy文件夹包含了运行游戏所需脚本，renpy.py负责启动游戏
 
 就这样，一个renpy壳就此诞生。
 将game文件夹扔进renpy壳里，执行renpy.py。这样游戏就能跑起来了。
