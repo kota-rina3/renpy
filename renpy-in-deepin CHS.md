@@ -45,4 +45,4 @@ pushd renpy && cp -R .git renpy renpy.py ~/Desktop/renpy-box
 > .git renpy renpy.py是常量，game是变量。
 想玩其他renpy游戏，只需删除原来的game文件夹，把新的game文件夹扔进去，再执行renpy.py即可。
 
-####注：请在虚拟环境下执行游戏！
+#### 注：请在虚拟环境下执行游戏！
