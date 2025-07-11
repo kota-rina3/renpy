@@ -883,6 +883,9 @@ class Interface(object):
         # The previous state of the screensaver.
         self.last_screensaver = None
 
+        self.last_emscripten_preload_time: float = get_time()
+        """The last time an idle frame allowed an emscripten preload pass to run without stuttering."""
+
         try:
             self.setup_nvdrs()
         except Exception:
@@ -1664,12 +1667,12 @@ class Interface(object):
         else:
             self.transition[layer] = transition
 
-    def event_peek(self):
+    def event_peek(self, sleep=True):
         """
         This peeks the next event. It returns None if no event exists.
         """
 
-        if renpy.emscripten:
+        if renpy.emscripten and sleep:
             emscripten.sleep(0)
 
         if self.pushed_event:
@@ -2272,7 +2275,7 @@ class Interface(object):
 
             renpy.plog(2, "after gc")
 
-    def idle_frame(self, can_block, expensive):
+    def idle_frame(self, expensive):
         """
         Tasks that are run during "idle" frames.
         """
@@ -2289,10 +2292,11 @@ class Interface(object):
         step = 1
 
         while True:
-            if self.event_peek() and not self.force_prediction:
+
+            if self.event_peek(False) and not self.force_prediction:
                 break
 
-            if not (can_block and expensive):
+            if not expensive:
                 if get_time() > (start + 0.0005):
                     break
 
@@ -2329,8 +2333,23 @@ class Interface(object):
 
             # Step 4: Preload images (on emscripten)
             elif step == 4:
-                if expensive and renpy.emscripten:
-                    renpy.display.im.cache.preload_thread_pass()
+                if renpy.emscripten:
+                    if expensive:
+                        allow_preload = True
+                        self.last_emscripten_preload_time = get_time()
+                    elif renpy.config.emscripten_preload_timeout is None:
+                        allow_preload = False
+                    elif get_time() - self.last_emscripten_preload_time > renpy.config.emscripten_preload_timeout:
+                        allow_preload = True
+                    else:
+                        allow_preload = False
+
+                    if allow_preload:
+                        try:
+                            renpy.display.im.cache.in_preload_pass = True
+                            renpy.display.im.cache.preload_thread_pass()
+                        finally:
+                            renpy.display.im.cache.in_preload_pass = False
 
                 step += 1
 
@@ -3022,7 +3041,7 @@ class Interface(object):
                         expensive = True
                         can_block = True
 
-                    self.idle_frame(can_block, expensive)
+                    self.idle_frame(expensive)
 
                 if needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
                     renpy.plog(1, "pre peek")
