@@ -20,10 +20,12 @@
 把renpy和pygame_sdl2给git下来：
 `git clone https://github.com/kota-rina3/renpy.git`
 
-`cd renpy && git clone https://github.com/kota-rina3/pygame_sdl2.git`
+`pushd renpy && git clone https://github.com/kota-rina3/pygame_sdl2.git`
+> *速度慢或失败了，尝试用**gitee**的镜像：`git clone https://gitee.com/ricervm-cn/renpy.git`*
+> *`https://gitee.com/ricervm-cn/pygame_sdl2`*
 
 进入pygame_sdl2，并执行下列编译命令：
-`cd pygame_sdl2 && python setup.py install`
+`pushd pygame_sdl2 && python setup.py install`
 
 退回到renpy，重复执行编译命令：
 `popd && python setup.py install`
