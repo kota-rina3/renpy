@@ -8,6 +8,12 @@
     old "View license"
     new "查看许可证"
 
+    old "OS: [pc_os]"
+    new "操作系统版本：[pc_os]"
+
+    old "CPU Architecture: [arch]"
+    new "CPU架构：[arch]"
+
     # game/add_file.rpy:28
     old "FILENAME"
     new "文件名"
