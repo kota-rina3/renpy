@@ -255,9 +255,9 @@ screen quick_menu():
             textbutton _("History") action ShowMenu('history')
             textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("Auto") action Preference("auto-forward", "toggle")
-            textbutton -("Home") action MainMenu(confirm=True)
+            textbutton _("Home") action MainMenu(confirm=True)
             textbutton _("Exit") action Quit(confirm=True)
-            textbutton -("Hide") action Function(renpy.iconify)
+            textbutton _("Hide") action Function(renpy.iconify)
             
 
 
