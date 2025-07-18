@@ -12,15 +12,16 @@
 > 可以**追加镜像源**加速下载：-i https://mirrors.aliyun.com/pypi/simple/
 
 把renpy和pygame_sdl2给git下来：
-`cd ~/Desktop && git clone https://github.com/kota-rina3/renpy.git` `cd ~/Desktop/renpy && git clone https://github.com/kota-rina3/pygame_sdl2.git`
+`cd ~/Desktop && git clone https://github.com/kota-rina3/renpy.git` 
+`cd ~/Desktop/renpy && git clone https://github.com/kota-rina3/pygame_sdl2.git`
 
 上述工作OK后，先进入pygame_sdl2文件夹编译pygame_sdl2模块：
-`cd ~/Desktop/renpy/pygame_sdl2` `python3.12 setup.py install`
+`cd ~/Desktop/renpy/pygame_sdl2 && python3.12 setup.py install`
 
 > 如果提示**<pygame_sdl2/pygame_sdl2.h>**找不到，请把 **pygame_sdl2.h、pygame.display_api.h、pygame.rwobject_api.h**和**pygame.surface_api.h**放至**/renpy/src/pygame_sdl2**里
 
 装好pygame_sdl2后，退回到renpy文件夹编译renpy模块：
-`cd ~/renpy/` `python3.12 setup.py install`
+`cd ~/Desktop/renpy/ && python3.12 setup.py install`
 
 > 如果提示<libhydrogen/impl/random.h>不支持此系统，请编辑random.h（就是加入这两段代码）：
 ```c
