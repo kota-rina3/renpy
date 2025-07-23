@@ -321,15 +321,9 @@ screen navigation():
 
         textbutton _("About") action ShowMenu("about")
 
-        if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
+        textbutton _("Help") action ShowMenu("help")
 
-            ## Help isn't necessary or relevant to mobile devices.
-            textbutton _("Help") action ShowMenu("help")
-
-        if renpy.variant("pc"):
-
-            ## The quit button is banned on iOS and unnecessary on Android and Web.
-            textbutton _("Quit") action Quit(confirm=not main_menu)
+        textbutton _("Quit") action Quit(confirm=not main_menu)
 
 
 style navigation_button is gui_button
@@ -414,7 +408,7 @@ style main_menu_version:
 ## This screen is intended to be used with one or more children, which are
 ## transcluded (placed) inside it.
 
-screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
+screen game_menu(title, scroll=None, yinitial=1.0, spacing=0):
 
     style_prefix "game_menu"
 
@@ -650,6 +644,8 @@ screen file_slots(title):
                             style "slot_name_text"
 
                         key "save_delete" action FileDelete(slot)
+
+                        textbutton "delete" action FileDelete(slot) style "gui_button" xpos .35 ypos -.2
 
             ## Buttons to access other pages.
             vbox:
