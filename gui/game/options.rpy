@@ -14,13 +14,13 @@
 ##
 ## The _() surrounding the string marks it as eligible for translation.
 
-define config.name = _("Ren'Py 7 Default GUI")
+define config.name = _("Ren'Py 8 Default GUI")
 
 
 ## Determines if the title given above is shown on the main menu
 ## screen. Set this to False to hide the title.
 
-define gui.show_name = True
+define gui.show_name = False
 
 
 ## The version of the game.
@@ -129,24 +129,7 @@ default preferences.text_cps = 0
 ## The default auto-forward delay. Larger numbers lead to longer waits,
 ## with 0 to 30 being the valid range.
 
-default preferences.afm_time = 15
-
-
-## Save directory ##############################################################
-##
-## Controls the platform-specific place Ren'Py will place the save
-## files for this game. The save files will be placed in:
-##
-## Windows: %APPDATA\RenPy\<config.save_directory>
-##
-## Macintosh: $HOME/Library/RenPy/<config.save_directory>
-##
-## Linux: $HOME/.renpy/<config.save_directory>
-##
-## This generally should not be changed, and if it is, should always be a
-## literal string, not an expression.
-
-define config.save_directory = "gui-7"
+default preferences.afm_time = 18
 
 
 ## Icon ########################################################################
