@@ -10,7 +10,7 @@
 
     # renpy/common/00console.rpy:492
     old "Press <esc> to exit console. Type help for help.\n"
-    new "按 Esc 来退出控制台。输入 help 来查看帮助。\n"
+    new "按 Esc 退出终端。输入 help 来查看帮助。\n"
 
     # renpy/common/00console.rpy:496
     old "Ren'Py script enabled."
@@ -51,6 +51,12 @@
     # renpy/common/00console.rpy:806
     old "load <slot>: loads the game from slot"
     new "load <档位>：读取该档位的存档"
+
+    old "Show Translation Info"
+    new "显示翻译"
+
+    old "Hide Translation Info"
+    new "隐藏翻译"
 
     # renpy/common/00console.rpy:819
     old "save <slot>: saves the game in slot"
@@ -114,7 +120,7 @@
 
     # renpy/common/_developer/developer.rpym:127
     old "Layer [l]:"
-    new "层  [l] ："
+    new " [l] 层："
 
     # renpy/common/_developer/developer.rpym:131
     old "    [name] [attributes] (hidden)"
@@ -130,8 +136,8 @@
 
     # renpy/common/_developer/developer.rpym:612
     old "\n{color=#fff}Click to copy.\nDrag to move.{/color}"
-    new "\n{color=#fff} 单击以复制。 \n 拖动以移动。 {/color}"
+    new "\n{color=#fff} 单击复制。 \n 拖拽移动。 {/color}"
 
     # renpy/common/_developer/developer.rpym:657
     old "Click to open in editor."
-    new "单击以在编辑器中打开。"
+    new "单击在编辑器中打开。"
