@@ -105,9 +105,7 @@ def get_version():
                 break
 
     except:
-        import traceback
-
-        traceback.print_exc()
+        pass
 
     return make_dict(branch)
 
