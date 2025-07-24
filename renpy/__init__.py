@@ -131,11 +131,6 @@ version_tuple = VersionTuple(*(int(i) for i in version.split(".")))
 # A string giving the version number only (8.0.1.123), with a suffix if needed.
 version_only = ".".join(str(i) for i in version_tuple)
 
-if not official:
-    version_only += "+unofficial"
-elif nightly:
-    version_only += "+nightly"
-
 # A verbose string giving the version.
 version = "Ren'Py " + version_only
 
