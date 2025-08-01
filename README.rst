@@ -212,3 +212,9 @@ License
 For the complete licensing terms, please read:
 
 https://www.renpy.org/doc/html/license.html
+
+TODO
+====
+
+1、Support riscv64 CPU architecture
+2、Make Qt GUI to manage Visual Novels
