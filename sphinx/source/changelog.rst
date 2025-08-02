@@ -13,7 +13,24 @@ Changelog (Ren'Py 7.x-)
 Other Changes
 -------------
 
+The config.images_directory variable has been superseded by :var:`config.image_directories`, which is a list of
+directories that Ren'Py searches for images.
+
 The game.zip file produced by the web platform no longer contains .py files.
+
+
+.. _renpy-8.4.1:
+
+8.4.2
+=====
+
+
+
+Other Changes
+-------------
+
+Ren'Py will now promopt you to close other Ren'Py games before an upgrade. This addresses problems on Windows
+that could be caused by launcher files in use by games that are running during the upgrade.
 
 
 .. _renpy-8.4.1:
