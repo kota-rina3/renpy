@@ -2,12 +2,12 @@
 The Ren'Py Visual Novel Engine
 ==============================
 
-\.. image:: https://img.shields.io/github/stars/kota-rina3/renpy
-\.. image:: https://img.shields.io/badge/platform-Windows%20%7C%20MacOS%20%7C%20Linux%20%7C%20HaikuOS-yellow
-\.. image:: https://img.shields.io/badge/CPU_architecture-x64%20%7C%20arm64%20%7C%20loong64-%23ea4300
-\.. image:: https://img.shields.io/badge/deepin_package_name-otohime.renpy.ayasaki.otome-0050ff
-\.. image:: https://img.shields.io/github/v/release/kota-rina3/renpy
-\.. image:: https://img.shields.io/github/downloads/kota-rina3/renpy/total
+.. image:: https://img.shields.io/github/stars/kota-rina3/renpy
+.. image:: https://img.shields.io/badge/platform-Windows%20%7C%20MacOS%20%7C%20Linux%20%7C%20HaikuOS-yellow
+.. image:: https://img.shields.io/badge/CPU_architecture-x64%20%7C%20arm64%20%7C%20loong64-%23ea4300
+.. image:: https://img.shields.io/badge/deepin_package_name-otohime.renpy.ayasaki.otome-0050ff
+.. image:: https://img.shields.io/github/v/release/kota-rina3/renpy
+.. image:: https://img.shields.io/github/downloads/kota-rina3/renpy/total
 
 https://www.renpy.org
 
