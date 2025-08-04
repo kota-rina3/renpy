@@ -8,6 +8,12 @@
     old "View license"
     new "查看许可证"
 
+    old "OS: [pc_os]"
+    new "操作系统版本：[pc_os]"
+
+    old "CPU Architecture: [arch]"
+    new "CPU架构：[arch]"
+
     # game/add_file.rpy:28
     old "FILENAME"
     new "文件名"
@@ -134,7 +140,7 @@
 
     # game/android.rpy:266
     old "Copying Android files to distributions directory."
-    new "正在复制安卓文件到发行版目录。"
+    new "正在复制安卓文件到游戏目录。"
 
     # game/android.rpy:335
     old "Android: [project.current.display_name!q]"
@@ -282,7 +288,7 @@
 
     # game/androidstrings.rpy:15
     old "The build seems to have failed."
-    new "构建似乎已失败。"
+    new "构建失败。"
 
     # game/androidstrings.rpy:16
     old "I'm installing the bundle."
@@ -294,15 +300,15 @@
 
     # game/androidstrings.rpy:18
     old "Launching app."
-    new "正在启动应用。"
+    new "应用启动中。"
 
     # game/androidstrings.rpy:19
     old "Launching the app appears to have failed."
-    new "启动应用似乎已失败。"
+    new "应用启动失败。"
 
     # game/androidstrings.rpy:20
     old "The build seems to have succeeded."
-    new "构建似乎已成功。"
+    new "构建成功。"
 
     # game/androidstrings.rpy:21
     old "What is the full name of your application? This name will appear in the list of installed applications."
@@ -362,11 +368,11 @@
 
     # game/androidstrings.rpy:35
     old "In landscape orientation."
-    new "横屏模式。"
+    new "横屏。"
 
     # game/androidstrings.rpy:36
     old "In portrait orientation."
-    new "竖屏模式。"
+    new "竖屏。"
 
     # game/androidstrings.rpy:37
     old "In the user's preferred orientation."
@@ -526,11 +532,11 @@
 
     # game/distribute.rpy:516
     old "Building distributions failed:\n\nThe build.directory_name variable may not include the space, colon, or semicolon characters."
-    new "构建分发失败：\n\n变量 build.directory_name 不能包含空格、冒号和分号。"
+    new "构建游戏失败：\n\n变量 build.directory_name 不能包含空格、冒号和分号。"
 
     # game/distribute.rpy:562
     old "No packages are selected, so there's nothing to do."
-    new "因未选择任何打包平台，故未执行任何操作。"
+    new "因未选择任何操作系统，故未执行任何操作。"
 
     # game/distribute.rpy:574
     old "Scanning Ren'Py files..."
@@ -542,7 +548,7 @@
 
     # game/distribute.rpy:846
     old "Archiving files..."
-    new "正在封装文件……"
+    new "正在封包……"
 
     # game/distribute.rpy:1207
     old "Unpacking the Macintosh application for signing..."
@@ -550,7 +556,7 @@
 
     # game/distribute.rpy:1217
     old "Signing the Macintosh application...\n(This may take a long time.)"
-    new "正在签名 Macintosh 应用……\n（可能需要很长时间。）"
+    new "签名 Macintosh 应用中……\n（可能需要很久。）"
 
     # game/distribute.rpy:1240
     old "Creating the Macintosh DMG..."
@@ -558,7 +564,7 @@
 
     # game/distribute.rpy:1251
     old "Signing the Macintosh DMG..."
-    new "正在签名 Macintosh DMG……"
+    new "签名 Macintosh DMG 中……"
 
     # game/distribute.rpy:1472
     old "Writing the [variant] [format] package."
@@ -566,7 +572,7 @@
 
     # game/distribute.rpy:1485
     old "Making the [variant] update zsync file."
-    new "正在制作 [variant] 版更新同步文件。"
+    new "生成 [variant] 版更新同步文件中。"
 
     # game/distribute.rpy:1598
     old "Processed {b}[complete]{/b} of {b}[total]{/b} files."
@@ -578,11 +584,11 @@
 
     # game/distribute.rpy:1674
     old "Copying files..."
-    new "正在复制文件……"
+    new "复制文件中……"
 
     # game/distribute_gui.rpy:157
     old "Build Distributions: [project.current.display_name!q]"
-    new "构建发行版：[project.current.display_name!q]"
+    new "要编译的游戏：[project.current.display_name!q]"
 
     # game/distribute_gui.rpy:171
     old "Directory Name:"
@@ -618,7 +624,7 @@
 
     # game/distribute_gui.rpy:216
     old "Build Packages:"
-    new "构建分发包："
+    new "选择支持的系统："
 
     # game/distribute_gui.rpy:235
     old "Options:"
@@ -634,7 +640,7 @@
 
     # game/distribute_gui.rpy:247
     old "Build"
-    new "构建"
+    new "编译"
 
     # game/distribute_gui.rpy:251
     old "Adding from clauses to call statements that do not have them."
@@ -642,7 +648,7 @@
 
     # game/distribute_gui.rpy:275
     old "Errors were detected when running the project. Please ensure the project runs without errors before building distributions."
-    new "运行项目时检测到错误。请确保项目运行时没有错误，然后再构建分发。"
+    new "运行项目时检测到错误。请确保项目运行时没有错误，然后重新编译。"
 
     # game/distribute_gui.rpy:294
     old "Your project does not contain build information. Would you like to add build information to the end of options.rpy?"
@@ -650,7 +656,7 @@
 
     # game/dmgcheck.rpy:50
     old "Ren'Py is running from a read only folder. Some functionality will not work."
-    new "Ren'Py 目前正在从只读文件夹运行。某些功能将无法工作。"
+    new "Ren'Py 目前正在从只读文件夹运行。某些功能将无法运作。"
 
     # game/dmgcheck.rpy:50
     old "This is probably because Ren'Py is running directly from a Macintosh drive image. To fix this, quit this launcher, copy the entire %s folder somewhere else on your computer, and run Ren'Py again."
@@ -830,11 +836,11 @@
 
     # game/front_page.rpy:206
     old "Delete Persistent"
-    new "删除持久化数据"
+    new "只删除持久化数据"
 
     # game/front_page.rpy:215
     old "Build Distributions"
-    new "构建发行版"
+    new "编译游戏"
 
     # game/front_page.rpy:217
     old "Android"
@@ -842,7 +848,7 @@
 
     # game/front_page.rpy:218
     old "iOS"
-    new "iOS"
+    new "苹果"
 
     # game/front_page.rpy:219
     old "Web"
@@ -866,7 +872,7 @@
 
     # game/front_page.rpy:277
     old "Deleting persistent data..."
-    new "正在删除持久化数据……"
+    new "删除持久化数据中……"
 
     # game/gui7.rpy:243
     old "Select Accent and Background Colors"
@@ -998,11 +1004,11 @@
 
     # game/interface.rpy:122
     old "Documentation"
-    new "说明文档"
+    new "文档"
 
     # game/interface.rpy:123
     old "Ren'Py Website"
-    new "Ren'Py 官方网站"
+    new "Ren'Py 官网"
 
     # game/interface.rpy:124
     old "[interface.version]"
@@ -1058,7 +1064,7 @@
 
     # game/interface.rpy:511
     old "PROCESSING"
-    new "正在处理"
+    new "处理中"
 
     # game/interface.rpy:528
     old "QUESTION"
@@ -1174,11 +1180,11 @@
 
     # game/itch.rpy:96
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "未找到已构建的发行版。请点击“构建”重试。"
+    new "未找到已编译的游戏。请点击“编译”重试。"
 
     # game/itch.rpy:134
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "未找到可上传的文件。请点击“构建”重试。"
+    new "未找到可上传的文件。请点击“编译”重试。"
 
     # game/itch.rpy:140
     old "The butler program was not found."
@@ -1186,7 +1192,7 @@
 
     # game/itch.rpy:140
     old "Please install the itch.io app, which includes butler, and try again."
-    new "itch.io 应用中包含 Butler 工具。请安装 itch.io 应用并重试。"
+    new "itch.io 应用中包含 Butler 工具。请安装 itch.io 并重试。"
 
     # game/itch.rpy:149
     old "The name of the itch project has not been set."
@@ -1254,7 +1260,7 @@
 
     # game/navigation.rpy:243
     old "+ Add script file"
-    new "+ 添加脚本文件"
+    new "添加脚本文件"
 
     # game/navigation.rpy:251
     old "No TODO comments found.\n\nTo create one, include \"# TODO\" in your script."
@@ -1392,13 +1398,16 @@
     old "Show edit file section"
     new "显示编辑文件部件"
 
+    old "Show tutorial projects"
+    new "显示Tutorials项目文件夹"
+
     # game/preferences.rpy:219
     old "Large fonts"
-    new "大字体"
+    new "放大字号"
 
     # game/preferences.rpy:222
     old "Console output"
-    new "控制台输出"
+    new "终端输出"
 
     # game/preferences.rpy:224
     old "Sponsor message"
@@ -1446,11 +1455,11 @@
 
     # game/preferences.rpy:308
     old "Cleaning temporary files..."
-    new "正在清理临时文件……"
+    new "清理临时文件中……"
 
     # game/preferences.rpy:338
     old "{#in language font}Welcome! Please choose a language"
-    new "{font=SourceHanSansLite.ttf}欢迎！请选择一种语言"
+    new "{font=SourceHanSansLite.ttf}欢迎光临！请选择语言"
 
     # game/preferences.rpy:373
     old "{#in language font}Start using Ren'Py in [lang_name]"
@@ -1462,11 +1471,11 @@
 
     # game/project.rpy:46
     old "Press shift+O (the letter) to access the console."
-    new "按 Shift+O（字母）打开控制台。"
+    new "按 Shift+O（字母）打开终端。"
 
     # game/project.rpy:46
     old "Press shift+D to access the developer menu."
-    new "按 Shift+D 打开开发者菜单。"
+    new "按 Shift+D 打开开发者选项。"
 
     # game/project.rpy:46
     old "Have you backed up your projects recently?"
@@ -1526,19 +1535,19 @@
 
     # game/translations.rpy:196
     old "Extract String Translations"
-    new "提取字串翻译"
+    new "提取翻译"
 
     # game/translations.rpy:198
     old "Merge String Translations"
-    new "合并字串翻译"
+    new "合并翻译"
 
     # game/translations.rpy:203
     old "Replace existing translations"
-    new "替换已存在的翻译"
+    new "替换已有翻译"
 
     # game/translations.rpy:204
     old "Reverse languages"
-    new "反转语言"
+    new "语言互换"
 
     # game/translations.rpy:208
     old "Update Default Interface Translations"
@@ -1546,7 +1555,7 @@
 
     # game/translations.rpy:228
     old "The extract command allows you to extract string translations from an existing project into a temporary file.\n\nThe merge command merges extracted translations into another project."
-    new "提取命令允许您从现有的项目中提取字串翻译至临时文件。\n\n合并命令将合并提取的翻译至其他项目。"
+    new "提取命令允许您从现有的项目中提取翻译至临时文件。\n\n合并命令将合并提取的翻译至其他项目。"
 
     # game/translations.rpy:252
     old "Ren'Py is generating translations...."
@@ -1558,19 +1567,19 @@
 
     # game/translations.rpy:276
     old "Ren'Py is extracting string translations..."
-    new "Ren'Py 正在导出字串翻译……"
+    new "Ren'Py 导出翻译中……"
 
     # game/translations.rpy:279
     old "Ren'Py has finished extracting [language] string translations."
-    new "Ren'Py 已导出 [language] 字串翻译。"
+    new "Ren'Py 已导出 [language] 翻译。"
 
     # game/translations.rpy:299
     old "Ren'Py is merging string translations..."
-    new "Ren'Py 正在合并字串翻译……"
+    new "Ren'Py 正在合并翻译……"
 
     # game/translations.rpy:302
     old "Ren'Py has finished merging [language] string translations."
-    new "Ren'Py 已合并 [language] 字串翻译。"
+    new "Ren'Py 已合并 [language] 翻译。"
 
     # game/translations.rpy:313
     old "Updating default interface translations..."
@@ -1610,7 +1619,7 @@
 
     # game/translations.rpy:428
     old "Ren'Py is extracting dialogue...."
-    new "Ren'Py 正在提取对话……"
+    new "Ren'Py 提取对话中……"
 
     # game/translations.rpy:432
     old "Ren'Py has finished extracting dialogue. The extracted dialogue can be found in dialogue.[persistent.dialogue_format] in the base directory."
@@ -1634,15 +1643,15 @@
 
     # game/updater.rpy:68
     old "Prerelease"
-    new "预发布版"
+    new "预览版"
 
     # game/updater.rpy:69
     old "Prerelease (Ren'Py 8, Python 3)"
-    new "预发布版 (Ren'Py 8, Python 3)"
+    new "预览版 (Ren'Py 8, Python 3)"
 
     # game/updater.rpy:70
     old "Prerelease (Ren'Py 7, Python 2)"
-    new "预发布版 (Ren'Py 7, Python 2)"
+    new "预览版 (Ren'Py 7, Python 2)"
 
     # game/updater.rpy:71
     old "A preview of the next version of Ren'Py that can be used for testing and taking advantage of new features, but not for final releases of games."
@@ -1650,11 +1659,11 @@
 
     # game/updater.rpy:73
     old "Experimental"
-    new "试验版"
+    new "体验版"
 
     # game/updater.rpy:74
     old "Experimental versions of Ren'Py. You shouldn't select this channel unless asked by a Ren'Py developer."
-    new "Ren'Py 试验版。除非应 Ren'Py 开发者的要求，否则您不应选择此通道。"
+    new "Ren'Py 体验版。除非应 Ren'Py 开发者的要求，否则您不应选择此通道。"
 
     # game/updater.rpy:76
     old "Nightly"
@@ -1671,6 +1680,9 @@
     # game/updater.rpy:79
     old "The bleeding edge of Ren'Py development. This may have the latest features, or might not run at all."
     new "Ren'Py 的尖端开发版。此版本也许包含了最新的功能，但也可能根本无法运行。"
+
+    old "Upgrade from Github"
+    new "去Github更新"
 
     # game/updater.rpy:96
     old "Select Update Channel"
@@ -1690,7 +1702,7 @@
 
     # game/updater.rpy:123
     old "• This version is installed and up-to-date."
-    new "• 该版本已安装并且是最新的。"
+    new "• 该版本已安装，目前是最新版。"
 
     # game/updater.rpy:135
     old "%B %d, %Y"
@@ -1702,11 +1714,11 @@
 
     # game/updater.rpy:159
     old "Checking for updates."
-    new "正在检查更新。"
+    new "检查更新中。"
 
     # game/updater.rpy:161
     old "Ren'Py is up to date."
-    new "Ren'Py 已更新到最新版本。"
+    new "Ren'Py 已更新到新版。"
 
     # game/updater.rpy:163
     old "[u.version] is now available. Do you want to install it?"
@@ -1730,7 +1742,7 @@
 
     # game/updater.rpy:173
     old "The update has been installed. Ren'Py will restart."
-    new "更新已安装。Ren'Py 即将重启。"
+    new "更新已安装。Ren'Py 将重启。"
 
     # game/updater.rpy:175
     old "The update has been installed."
@@ -1964,7 +1976,7 @@
 
     # game/preferences.rpy:266
     old "Prefer RPU updates"
-    new "偏好 RPU 更新"
+    new "优先用 RPU 更新"
 
     # game/preferences.rpy:338
     old "Open projects.txt"
@@ -2009,3 +2021,9 @@
     # game/updater.rpy:78
     old "Nightly Fix (Ren'Py 7, Python 2)"
     new "每夜修复版（Ren'Py 7，Python 2）"
+
+    old "Delete Savedata"
+    new "清除存档"
+
+    old "Deleting save data..."
+    new "清除存档中......"
