@@ -64,7 +64,7 @@ debug_sound = os.environ.get("RENPY_DEBUG_SOUND", False)
 rollback_enabled = True
 
 # If the rollback is longer than this, we may trim it.
-rollback_length = 128
+rollback_length = 192
 
 # If set to True, clicking while in rollback will keep the roll forward
 # buffer if the data has not changed.
@@ -264,7 +264,7 @@ editor_transient = None  # os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
 editor_file_separator = None  # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
 
 # Enable developer mode?
-developer = False  # Changed to True or False in the init code.
+developer = True  # Changed to True or False in the init code.
 
 # The value of developer requested by the creator (True, False, or "auto")
 original_developer = False
@@ -276,7 +276,7 @@ default_developer = False
 log = None
 
 # Clear config.log at startup
-clear_log = False
+clear_log = True
 
 # Lint hooks.
 lint_hooks = []
@@ -1585,21 +1585,6 @@ so might cause a framerate stutter.
 adjust_audio_amplitude: float = 1.0
 """
 Adjusts the amplitude of all audio played back by multiplying it by this value.
-"""
-
-zoom_zaxis: bool = True
-"""
-If True, zooms will apply to the z-axis as well as the x and y axes.
-"""
-
-context_callbacks: list[Callable[[], None]] = []
-"""
-A list of callbacks that are called when entering a new context.
-"""
-
-live2d_max_memory: int = 32 * 1024 * 1024
-"""
-The maximum amount of memory, in bytes, that can be used by live2d and models on the web platform.
 """
 
 
