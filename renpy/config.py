@@ -1587,6 +1587,21 @@ adjust_audio_amplitude: float = 1.0
 Adjusts the amplitude of all audio played back by multiplying it by this value.
 """
 
+zoom_zaxis: bool = True
+"""
+If True, zooms will apply to the z-axis as well as the x and y axes.
+"""
+
+context_callbacks: list[Callable[[], None]] = []
+"""
+A list of callbacks that are called when entering a new context.
+"""
+
+live2d_max_memory: int = 32 * 1024 * 1024
+"""
+The maximum amount of memory, in bytes, that can be used by live2d and models on the web platform.
+"""
+
 
 del os
 del collections
