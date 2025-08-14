@@ -974,6 +974,9 @@
     old "Install Live2D Cubism SDK for Native"
     new "安装 Live2D Cubism SDK for Native"
 
+    old "Install Live2D Cubism SDK for Web"
+    new "安装 Live2D Cubism SDK for Web"
+
     # game/install.rpy:159
     old "Install Libraries"
     new "安装库"
