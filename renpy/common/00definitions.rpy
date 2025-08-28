@@ -118,17 +118,17 @@ init -1400 python:
         `prefix`, this defines the transitions:
 
         * *prefix* - A transition that takes `delay` seconds to move images that
-          changed positions to their new locations.
+            changed positions to their new locations.
 
         * *prefix*\ inleft, *prefix*\ inright, *prefix*\ intop, *prefix*\ inbottom - Transitions
-          that take `delay` seconds to move images that changed positions to their
-          new locations, with newly shown images coming in from the appropriate
-          side.
+            that take `delay` seconds to move images that changed positions to their
+            new locations, with newly shown images coming in from the appropriate
+            side.
 
         * *prefix*\ outleft, *prefix*\ outright, *prefix*\ outtop, *prefix*\ outbottom -
-          Transitions that take `delay` seconds to move images that changed
-          positions to their new locations, with newly hidden images leaving via
-          the appropriate side.
+            Transitions that take `delay` seconds to move images that changed
+            positions to their new locations, with newly hidden images leaving via
+            the appropriate side.
 
         The other parameters are as :class:`MoveTransition` takes them:
 
@@ -364,7 +364,7 @@ init -1400:
     define hpunch = Move((15, 0), (-15, 0), .10, bounce=True, repeat=True, delay=.275)
 
     # These use the ImageDissolve to do some nifty effects.
-    define blinds = ImageDissolve(Tile("blindstile.png"), 1.0, 8)
+    define blinds = ImageDissolve(Tile("blindstile.png"), 1.0, 256)
     define squares = ImageDissolve(Tile("squarestile.png"), 1.0, 256)
 
     transform Swing(delay=1.0, vertical=False, reverse=False, background="#000", flatten=True, new_widget=None, old_widget=None):
