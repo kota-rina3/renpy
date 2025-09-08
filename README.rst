@@ -104,13 +104,6 @@ For Chinese users, please append the mirror source address at the end to speed u
 
     -i https://mirrors.aliyun.com/pypi/simple/
 
-Then, install pygame_sdl2 by running the following commands::
-
-    git clone https://www.github.com/renpy/pygame_sdl2
-    pushd pygame_sdl2
-    python setup.py install
-    popd
-
 Finally, use setup.py to compile extension modules that support Ren'Py::
 
     python setup.py build_ext --inplace
