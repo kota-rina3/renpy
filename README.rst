@@ -2,8 +2,14 @@
 The Ren'Py Visual Novel Engine
 ==============================
 
-https://www.renpy.org
+.. image:: https://img.shields.io/github/stars/kota-rina3/renpy
+.. image:: https://img.shields.io/badge/platform-Windows%20%7C%20MacOS%20%7C%20Linux%20%7C%20HaikuOS-yellow
+.. image:: https://img.shields.io/badge/CPU_architecture-x64%20%7C%20arm64%20%7C%20loong64-%23ea4300
+.. image:: https://img.shields.io/badge/deepin_package_name-otohime.renpy.ayasaki.otome-0050ff
+.. image:: https://img.shields.io/github/v/release/kota-rina3/renpy
+.. image:: https://img.shields.io/github/downloads/kota-rina3/renpy/total
 
+https://www.renpy.org
 
 Branches
 ========
@@ -72,7 +78,8 @@ the command::
 
     sudo apt install python3-dev libassimp-dev libavcodec-dev libavformat-dev \
         libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
-        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev pkg-config
+        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev pkg-config \
+        python3-legacy-cgi zenity python3-tk
 
 Ren'Py requires SDL_image 2.6 or greater. If your distribution doesn't include
 that version, you'll need to download it from:
@@ -91,7 +98,18 @@ Avtivate the virtualenv using::
 You'll need to activate the virtualenv each time you begin working on Ren'Py.
 After activating the virtualenv, install additional dependencies::
 
-    pip install -U setuptools cython future six typing pefile requests ecdsa
+    pip install -U setuptools cython future six typing pefile requests ecdsa assimp legacy-cgi
+
+For Chinese users, please append the mirror source address at the end to speed up the download::
+
+    -i https://mirrors.aliyun.com/pypi/simple/
+
+Then, install pygame_sdl2 by running the following commands::
+
+    git clone https://www.github.com/renpy/pygame_sdl2
+    pushd pygame_sdl2
+    python setup.py install
+    popd
 
 Finally, use setup.py to compile extension modules that support Ren'Py::
 
@@ -200,3 +218,10 @@ License
 For the complete licensing terms, please read:
 
 https://www.renpy.org/doc/html/license.html
+
+TODO
+====
+
+\ 1）Support riscv64 CPU architecture
+
+\ 2）Make Qt GUI to manage Visual Novels
