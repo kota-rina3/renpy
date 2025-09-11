@@ -27,4 +27,4 @@
 
 返回桌面，创建renpy-box文件夹
 把renpy文件夹、renpy.py和三个.so库都放进renpy-box里
-将game文件夹放进renpy-box并执行renpy.py，等待一会就能玩了
+将game文件夹放进renpy-box并执行renpy.py，等一会就能玩了
