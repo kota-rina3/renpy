@@ -17,6 +17,9 @@ dependencies = [
     "sphinx",
     "sphinx_rtd_theme",
     "sphinx_rtd_dark_mode",
+    "typing",
+    "assimp",
+    "legacy-cgi",
 ]
 
 
