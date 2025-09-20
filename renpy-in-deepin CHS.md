@@ -1,28 +1,23 @@
 ### deepin编译、运行renpy
 ---
 老规矩，先安装下列依赖：
-`sudo apt install python3.12-venv python3-dev libassimp-dev libavcodec-dev libavformat-dev libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev pkg-config zenity python3-tk`
+`sudo apt update && sudo apt install python3-pip python3-dev libassimp-dev libavcodec-dev libavformat-dev libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev pkg-config zenity python3-tk`
 > 安装了星火应用商店的用户可用**aptss**加速下载
 
-创建python虚拟环境：
-`python -m venv .venv --prompt renpy-deepin`
-
-激活（进入）虚拟环境：
-`source .venv/bin/activate`
-
-在虚拟环境内，安装模块：
-`pip install setuptools cython future six typing pefile requests ecdsa assimp legacy-cgi`
-> *可以**追加镜像源**加速下载：`-i https://mirrors.aliyun.com/pypi/simple/`*
+安装uv模块：
+`pip3 install uv -i https://mirrors.aliyun.com/pypi/simple/ --break-system-packages`
 
 把renpy给git下来：
 `git clone https://github.com/kota-rina3/renpy.git`
-
 > *速度慢或失败了，尝试用**gitee**的镜像：`git clone https://gitee.com/ricervm-cn/renpy.git`*
 
-进入renpy，并执行下列编译命令：
-`pushd renpy && python setup.py build_ext --inplace`
+进入renpy，执行uv同步，并执行编译脚本：
+`pushd renpy && /home/你的用户名/.local/bin/uv sync && ./run.sh`
+> “你的用户名”改为你安装系统时设的用户名
 
-执行renpy.py，若能调用，说明编译安装成功：
+编译完后，会自行启动renpy。
+
+若想再次启用renpy，请输入：
 `python renpy.py`
 
 ### 游戏 in renpy壳
