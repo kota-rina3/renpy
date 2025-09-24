@@ -297,7 +297,7 @@ class Channel(object):
         self.secondary_volume_time = None
 
         # Should we stop playing on mute?
-        self.stop_on_mute = stop_on_mute
+        self.stop_on_mute = False   #静音时仍播放，符合大多数情况
 
         # Is this channel tight?
         self.tight = tight

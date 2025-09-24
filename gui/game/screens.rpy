@@ -94,8 +94,17 @@ style frame:
 ## id "who" and id "window" to apply style properties.
 ##
 ## https://www.renpy.org/doc/html/screen_special.html#say
+default persistent.show_orgin_tl = False
 
 screen say(who, what):
+    '''
+    要想启用双语对照功能，请在设置界面添加：
+    textbutton "显示" action SetVariable("persistent.show_orgin_tl", True)
+    textbutton "隐藏" action SetVariable("persistent.show_orgin_tl", False)
+    '''
+    python:
+        tl = renpy.get_translation_info()
+        filename, line = renpy.get_filename_line()
 
     window:
         id "window"
@@ -107,7 +116,18 @@ screen say(who, what):
                 style "namebox"
                 text who id "who"
 
-        text what id "what"
+        if renpy.is_seen(ever=True):
+            text what id "what" color "#ffcc00"
+        else:
+            text what id "what"
+
+        if persistent.show_orgin_tl is True:
+            if tl and preferences.language and tl.source:
+                    null height gui._scale(7)
+
+                    for s in tl.source:
+                        text "    [s]":
+                            size 20 color "#fff" yalign .8
 
 
     ## If there's a side image, display it above the text. Do not display
@@ -246,14 +266,24 @@ screen quick_menu():
             style_prefix "quick"
             style "quick_menu"
 
-            textbutton _("Back") action Rollback()
-            textbutton _("History") action ShowMenu('history')
-            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
-            textbutton _("Auto") action Preference("auto-forward", "toggle")
+            #textbutton _("Back") action Rollback()
+            
+            
+            
             textbutton _("Save") action ShowMenu('save')
+            textbutton _("Load") action ShowMenu('load')
             textbutton _("Q.Save") action QuickSave()
             textbutton _("Q.Load") action QuickLoad()
             textbutton _("Prefs") action ShowMenu('preferences')
+            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
+            textbutton _("Auto") action Preference("auto-forward", "toggle")
+            textbutton _("voice") action VoiceReplay()
+            textbutton _("History") action ShowMenu('history')
+            textbutton _("Title") action MainMenu(confirm=True)
+            textbutton _("Exit") action Quit(confirm=True)
+            textbutton _("Hide") action Function(renpy.iconify)
+            textbutton _("Shot") action Screenshot()
+            textbutton _("X") action HideInterface()
 
 
 ## This code ensures that the quick_menu screen is displayed in-game, whenever
@@ -321,15 +351,9 @@ screen navigation():
 
         textbutton _("About") action ShowMenu("about")
 
-        if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
+        textbutton _("Help") action ShowMenu("help")
 
-            ## Help isn't necessary or relevant to mobile devices.
-            textbutton _("Help") action ShowMenu("help")
-
-        if renpy.variant("pc"):
-
-            ## The quit button is banned on iOS and unnecessary on Android and Web.
-            textbutton _("Quit") action Quit(confirm=not main_menu)
+        textbutton _("Quit") action Quit(confirm=not main_menu)
 
 
 style navigation_button is gui_button
@@ -414,7 +438,7 @@ style main_menu_version:
 ## This screen is intended to be used with one or more children, which are
 ## transcluded (placed) inside it.
 
-screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
+screen game_menu(title, scroll=None, yinitial=1.0, spacing=0):
 
     style_prefix "game_menu"
 
@@ -643,13 +667,15 @@ screen file_slots(title):
 
                         add FileScreenshot(slot) xalign 0.5
 
-                        text FileTime(slot, format=_("{#file_time}%A, %B %d %Y, %H:%M"), empty=_("empty slot")):
+                        text FileTime(slot, format=_("{#file_time}%A, %B %d %Y, %H:%M:%S"), empty=_("empty slot")):
                             style "slot_time_text"
 
                         text FileSaveName(slot):
                             style "slot_name_text"
 
                         key "save_delete" action FileDelete(slot)
+
+                        textbutton "delete" action FileDelete(slot) style "gui_button" xpos .35 ypos -.2
 
             ## Buttons to access other pages.
             vbox:
@@ -679,15 +705,6 @@ screen file_slots(title):
                     textbutton _(">") action FilePageNext()
                     key "save_page_next" action FilePageNext()
 
-                if config.has_sync:
-                    if CurrentScreenName() == "save":
-                        textbutton _("Upload Sync"):
-                            action UploadSync()
-                            xalign 0.5
-                    else:
-                        textbutton _("Download Sync"):
-                            action DownloadSync()
-                            xalign 0.5
 
 
 style page_label is gui_label
@@ -1531,9 +1548,21 @@ screen quick_menu():
             style_prefix "quick"
 
             textbutton _("Back") action Rollback()
+            textbutton _("History") action ShowMenu('history')
             textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
             textbutton _("Auto") action Preference("auto-forward", "toggle")
-            textbutton _("Menu") action ShowMenu()
+            textbutton _("Save") action ShowMenu('save')
+            textbutton _("Q.Save") action QuickSave()
+            textbutton _("Q.Load") action QuickLoad()
+            #textbutton _("Menu") action ShowMenu()
+            textbutton _("Prefs") action ShowMenu('preferences')
+            textbutton _("voice") action VoiceReplay()
+            textbutton _("title") action MainMenu(confirm=True)
+            textbutton _("exit") action Quit(confirm=True)
+            textbutton _("E.hide") action Function(renpy.iconify)
+            textbutton _("scnshot") action Screenshot()
+            textbutton _("X") action HideInterface()
+            
 
 
 style window:

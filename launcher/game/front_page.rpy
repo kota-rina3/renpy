@@ -216,6 +216,7 @@ screen front_page_project:
 
 
                 textbutton _("Delete Persistent") action Jump("rmpersistent")
+                textbutton _("Delete Savedata") action Jump("rmsavedata")
                 textbutton _("Force Recompile") action Jump("force_recompile")
 
                 # textbutton "Relaunch" action Relaunch
@@ -292,7 +293,22 @@ label rmpersistent:
 
     python hide:
         interface.processing(_("Deleting persistent data..."))
-        project.current.launch([ 'rmpersistent' ], wait=True)
+        try:
+            os.remove(os.path.join(f"{persistent.projects_directory}", f"{project.current.display_name}", "game", "saves","persistent"))
+        except FileNotFoundError:
+            pass
+
+    jump front_page
+
+label rmsavedata:
+
+    python hide:
+        try:
+            interface.processing(_("Deleting save data..."))
+            shutil.rmtree(os.path.join(f"{persistent.projects_directory}", f"{project.current.display_name}", "game", "saves"))
+            os.mkdir(os.path.join(f"{persistent.projects_directory}", f"{project.current.display_name}", "game", "saves"))
+        except FileNotFoundError:
+            pass
 
     jump front_page
 
