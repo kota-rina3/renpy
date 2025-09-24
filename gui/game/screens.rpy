@@ -101,6 +101,7 @@ screen say(who, what):
     要想启用双语对照功能，请在设置界面添加：
     textbutton "显示" action SetVariable("persistent.show_orgin_tl", True)
     textbutton "隐藏" action SetVariable("persistent.show_orgin_tl", False)
+    支持语音播放进度条
     '''
     python:
         tl = renpy.get_translation_info()
@@ -129,6 +130,15 @@ screen say(who, what):
                         text "    [s]":
                             size 20 color "#fff" yalign .8
 
+    $ duration = get_voice_duration() or 0.0
+    $ pos = get_voice_pos() or 0.0
+
+    if duration > 0 and renpy.music.is_playing(channel='voice'): # 只在有语音播放且持续时间大于0时显示进度条
+        bar:
+            value AnimatedValue(value=pos, range=duration, delay=0.1)
+            pos (.8, .92)
+        timer 0.1 repeat True action SetVariable("pos", duration)
+
 
     ## If there's a side image, display it above the text. Do not display
     ## on the phone variant - there's no room.
@@ -139,6 +149,19 @@ screen say(who, what):
 ## Make the namebox available for styling through the Character object.
 init python:
     config.character_id_prefixes.append('namebox')
+
+    def get_voice_duration(): # 获取当前语音的持续时间
+        if renpy.music.is_playing(channel='voice'):
+            if renpy.music.get_duration(channel='voice') is None:
+                return 0.0
+            return renpy.music.get_duration(channel='voice')
+        return 0.0
+    def get_voice_pos(): # 获取当前语音的播放位置
+        if renpy.music.is_playing(channel='voice'):
+            if renpy.music.get_pos(channel='voice') is None:
+                return 0.0
+            return renpy.music.get_pos(channel='voice')
+        return 0.0
 
 style window is default
 style say_label is default
