@@ -1147,3 +1147,217 @@ def SubTransition(rect, trans, old_widget=None, new_widget=None, **properties):
     f.add(inner)
 
     return NoTransition(delay, old_widget=f, new_widget=f)
+
+#####################################################################################
+# 在文件末尾添加以下代码，还得在defaultstore.py注册：Abcd = renpy.curry.curry(renpy.display.transition.Abcd)
+
+class ShakeTransition(Transition):
+    """
+    :doc: transition function
+    :args: (time, intensity=10, frequency=20, direction="both")
+    :name: Shake
+    
+    返回一个窗口抖动过渡效果。
+    
+    `time`
+        过渡持续时间（秒）
+    
+    `intensity`
+        抖动强度（像素）
+    
+    `frequency`
+        抖动频率（Hz），值越高抖动越快
+    
+    `direction`
+        抖动方向："both"（水平和垂直）、"horizontal"（水平）、"vertical"（垂直）
+    """
+
+    def __init__(self, time, intensity=10, frequency=20, direction="both", old_widget=None, new_widget=None, **properties):
+        super(ShakeTransition, self).__init__(time, **properties)
+        
+        self.time = time
+        self.intensity = intensity
+        self.frequency = frequency
+        self.direction = direction
+        
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+        self.events = False
+
+    def render(self, width, height, st, at):
+        if renpy.game.less_updates:
+            return null_render(self, width, height, st, at)
+            
+        if st >= self.time:
+            self.events = True
+            return render(self.new_widget, width, height, st, at)
+            
+        # 计算抖动进度（0到1之间）
+        progress = st / self.time
+        
+        # 计算当前帧的抖动偏移量
+        import math
+        
+        # 使用正弦波创建平滑的抖动效果
+        shake_factor = (1.0 - progress)  # 随着时间减弱抖动强度
+        time_factor = st * self.frequency * 2 * math.pi  # 时间因子
+        
+        if self.direction == "both" or self.direction == "horizontal":
+            x_offset = math.sin(time_factor * 1.1) * self.intensity * shake_factor
+        else:
+            x_offset = 0
+            
+        if self.direction == "both" or self.direction == "vertical":
+            y_offset = math.cos(time_factor * 0.9) * self.intensity * shake_factor
+        else:
+            y_offset = 0
+        
+        # 渲染新场景（带抖动效果）
+        new_render = render(self.new_widget, width, height, st, at)
+        
+        # 创建渲染对象
+        rv = renpy.display.render.Render(new_render.width, new_render.height)
+        
+        # 应用抖动偏移
+        rv.blit(new_render, (x_offset, y_offset))
+        
+        # 请求重绘以实现连续抖动
+        renpy.display.render.redraw(self, 1.0 / self.frequency)
+        
+        return rv
+
+
+class ImpactShakeTransition(Transition):
+    """
+    :doc: transition function
+    :args: (time, intensity=15, decay=0.5)
+    :name: ImpactShake
+    
+    返回一个冲击抖动效果，强度随时间衰减。
+    
+    `time`
+        过渡持续时间（秒）
+    
+    `intensity`
+        初始抖动强度（像素）
+    
+    `decay`
+        衰减系数（0-1），值越大衰减越快
+    """
+
+    def __init__(self, time, intensity=15, decay=0.5, old_widget=None, new_widget=None, **properties):
+        super(ImpactShakeTransition, self).__init__(time, **properties)
+        
+        self.time = time
+        self.intensity = intensity
+        self.decay = decay
+        
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+        self.events = False
+
+    def render(self, width, height, st, at):
+        if renpy.game.less_updates:
+            return null_render(self, width, height, st, at)
+            
+        if st >= self.time:
+            self.events = True
+            return render(self.new_widget, width, height, st, at)
+            
+        # 计算衰减后的强度
+        progress = st / self.time
+        current_intensity = self.intensity * (1.0 - progress) ** (1.0 / max(0.1, self.decay))
+        
+        import math
+        import random
+        
+        # 创建随机但平滑的抖动
+        x_offset = (random.random() * 2 - 1) * current_intensity
+        y_offset = (random.random() * 2 - 1) * current_intensity * 0.7  # 垂直抖动稍弱
+        
+        # 渲染新场景
+        new_render = render(self.new_widget, width, height, st, at)
+        
+        # 创建渲染对象
+        rv = renpy.display.render.Render(new_render.width, new_render.height)
+        
+        # 应用抖动偏移
+        rv.blit(new_render, (x_offset, y_offset))
+        
+        # 请求重绘
+        renpy.display.render.redraw(self, 0.05)  # 每秒20帧的更新率
+        
+        return rv
+
+
+class EarthquakeTransition(Transition):
+    """
+    :doc: transition function
+    :args: (time, intensity=8, complexity=3)
+    :name: Earthquake
+    
+    返回一个地震效果，包含多个频率的复合抖动。
+    
+    `time`
+        过渡持续时间（秒）
+    
+    `intensity`
+        抖动强度（像素）
+    
+    `complexity`
+        复合抖动层数，值越高效果越复杂
+    """
+
+    def __init__(self, time, intensity=8, complexity=3, old_widget=None, new_widget=None, **properties):
+        super(EarthquakeTransition, self).__init__(time, **properties)
+        
+        self.time = time
+        self.intensity = intensity
+        self.complexity = max(1, complexity)
+        
+        self.old_widget = old_widget
+        self.new_widget = new_widget
+        self.events = False
+
+    def render(self, width, height, st, at):
+        if renpy.game.less_updates:
+            return null_render(self, width, height, st, at)
+            
+        if st >= self.time:
+            self.events = True
+            return render(self.new_widget, width, height, st, at)
+            
+        import math
+        
+        # 计算复合抖动
+        x_offset = 0
+        y_offset = 0
+        
+        for i in range(self.complexity):
+            freq = (i + 1) * 5  # 每层频率递增
+            amp = self.intensity / (i + 1)  # 高频层振幅递减
+            
+            # 添加不同频率的正弦波
+            x_offset += math.sin(st * freq * 2 * math.pi) * amp
+            y_offset += math.cos(st * freq * 2.3 * math.pi) * amp * 0.7
+        
+        # 应用衰减
+        progress = st / self.time
+        decay = 1.0 - progress * 0.5  # 轻微衰减
+        
+        x_offset *= decay
+        y_offset *= decay
+        
+        # 渲染新场景
+        new_render = render(self.new_widget, width, height, st, at)
+        
+        # 创建渲染对象
+        rv = renpy.display.render.Render(new_render.width, new_render.height)
+        
+        # 应用抖动偏移
+        rv.blit(new_render, (x_offset, y_offset))
+        
+        # 请求重绘
+        renpy.display.render.redraw(self, 0.033)  # 约30fps
+        
+        return rv
