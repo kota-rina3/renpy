@@ -223,6 +223,8 @@ backup_blacklist = {
     "renpy.test.testkey",
     "renpy.test.testmouse",
     "renpy.test.testparser",
+    "renpy.test.testreporter",
+    "renpy.test.testsettings",
     "renpy.tfd",
     "renpy.gl2",
     "renpycoverage",
@@ -565,11 +567,13 @@ def import_all():
     import renpy.defaultstore
 
     import renpy.test
+    import renpy.test.testsettings
     import renpy.test.testmouse
     import renpy.test.testfocus
     import renpy.test.testkey
     import renpy.test.testast
     import renpy.test.testparser
+    import renpy.test.testreporter
     import renpy.test.testexecution
 
     import renpy.update
@@ -695,6 +699,8 @@ def reload_all():
 
     # Re-initialize the importer.
     renpy.importer.init_importer()
+
+    renpy.test.testexecution.on_reload()
 
     # Reset main log clock.
     renpy.main.reset_clock()
