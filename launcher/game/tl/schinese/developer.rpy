@@ -141,3 +141,12 @@
     # renpy/common/_developer/developer.rpym:657
     old "Click to open in editor."
     new "单击在编辑器中打开。"
+
+    old "Edit Screen Recording Board"
+    new "编辑录播板"
+
+    old "Show Screen Recording Board"
+    new "显示录播板"
+
+    old "Hide Screen Recording Board"
+    new "隐藏录播板"

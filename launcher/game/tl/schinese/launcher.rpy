@@ -2030,3 +2030,9 @@
 
     old "Deleting save data..."
     new "清除存档中......"
+
+    old "Launch tests"
+    new "开始测试"
+
+    old "Launching tests..."
+    new "开始测试......"
