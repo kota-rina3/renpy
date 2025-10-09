@@ -19,7 +19,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import NotRequired, TypedDict, Any
+from typing import Callable, SupportsIndex, NotRequired, TypedDict, Any, final, overload
 
 import sys
 import os
@@ -29,11 +29,13 @@ import threading
 import gc
 import atexit
 import platform
+import functools
 
 import renpy
 import renpy.pygame as pygame
 
-from renpy.atl import position
+from renpy.types import Position
+from renpy.display.position import absolute, position
 
 # Imports for backward compatibility.
 from renpy.display.displayable import Displayable, DisplayableArguments as DisplayableArguments, place as place
@@ -192,113 +194,6 @@ class EndInteraction(Exception):
         self.value = value
 
 
-class absolute(float):
-    """
-    This represents an absolute float coordinate.
-    """
-
-    __slots__ = ()
-
-    def __repr__(self):
-        return f"absolute({float.__repr__(self)})"
-
-    def __divmod__(self, value: float, /):
-        return self // value, self % value
-
-    def __rdivmod__(self, value: float, /):
-        return value // self, value % self
-
-    @staticmethod
-    def compute_raw(value: "position | absolute | float | int", room: float) -> "absolute | float | int":
-        """
-        Converts a position from one of the many supported position types
-        into an absolute number of pixels, without regard for the return type.
-        """
-
-        if isinstance(value, position):
-            return value.relative * room + value.absolute
-
-        elif isinstance(value, (absolute, int)):
-            return value
-
-        elif isinstance(value, float):
-            return value * room
-
-        else:
-            raise TypeError(f"Value {value} of type {type(value)} not recognized as a position.")
-
-    @staticmethod
-    def compute(value: "position | absolute | float | int", room: float) -> "absolute":
-        """
-        Does the same, but converts the result to the absolute type.
-        """
-
-        return absolute(absolute.compute_raw(value, room))
-
-
-def _absolute_wrap(func):
-    """
-    Wraps func into a method of absolute. The wrapped method
-    converts a float result back to absolute.
-    """
-
-    def wrapper(*args):
-        rv = func(*args)
-
-        if type(rv) is float:
-            return absolute(rv)
-        else:
-            return rv
-
-    return wrapper
-
-
-fn = f = None
-
-for fn in (
-    "__abs__",
-    "__add__",
-    # '__bool__', # non-float
-    "__ceil__",
-    # '__divmod__', # special-cased above, tuple of floats
-    # '__eq__', # non-float
-    "__floordiv__",
-    # '__format__', # non-float
-    # '__ge__', # non-float
-    # '__gt__', # non-float
-    # '__hash__', # non-float
-    # '__int__', # non-float
-    # '__le__', # non-float
-    # '__lt__', # non-float
-    "__mod__",
-    "__mul__",
-    # '__ne__', # non-float
-    "__neg__",
-    "__pos__",
-    "__pow__",
-    "__radd__",
-    # '__rdivmod__', # special-cased above, tuple of floats
-    "__rfloordiv__",
-    "__rmod__",
-    "__rmul__",
-    "__round__",
-    "__rpow__",
-    "__rsub__",
-    "__rtruediv__",
-    # '__str__', # non-float
-    "__sub__",
-    "__truediv__",
-    # '__trunc__', # non-float
-    # 'as_integer_ratio', # tuple of non-floats
-    "conjugate",
-    "fromhex",
-    # 'hex', # non-float
-    # 'is_integer', # non-float
-):
-    f = getattr(float, fn)
-    setattr(absolute, fn, _absolute_wrap(f))
-
-del _absolute_wrap, fn, f
 
 
 class MouseMove:
