@@ -27,6 +27,7 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 
 import renpy
+from renpy.display.position import absolute
 import renpy.pygame as pygame
 from renpy.display.render import render, Render
 
@@ -1293,11 +1294,11 @@ class MultiBox(Container):
 
         return None
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         if self.layers or self.scene_list:
-            return self._tts_common(reverse=renpy.config.tts_front_to_back)
+            return self._tts_common(reverse=renpy.config.tts_front_to_back, raw=raw)
         else:
-            return self._tts_common()
+            return self._tts_common(raw=raw)
 
 
 def Fixed(**properties):
@@ -1379,10 +1380,10 @@ class Window(Container):
         xmaximum = self.style.xmaximum
         ymaximum = self.style.ymaximum
 
-        if type(xmaximum) is float:
-            xmaximum = width
-        if type(ymaximum) is float:
-            ymaximum = height
+        if xmaximum is not None:
+            xmaximum = absolute.compute(xmaximum, width)
+        if ymaximum is not None:
+            ymaximum = absolute.compute(ymaximum, height)
 
         size_group = self.style.size_group
         if size_group and size_group in size_groups:
@@ -2575,9 +2576,9 @@ class NearRect(Container):
         else:
             return None
 
-    def _tts(self):
+    def _tts(self, raw: bool) -> str:
         if self.parent_rect is not None:
-            return self._tts_common()
+            return self._tts_common(raw=raw)
         else:
             return ""
 
