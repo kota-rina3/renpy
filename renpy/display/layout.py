@@ -27,7 +27,6 @@ from renpy.compat import PY2, basestring, bchr, bord, chr, open, pystr, range, r
 
 
 import renpy
-from renpy.display.position import absolute
 import renpy.pygame as pygame
 from renpy.display.render import render, Render
 
@@ -1377,13 +1376,19 @@ class Window(Container):
 
         xminimum, yminimum = xyminimums(style, width, height)
 
-        xmaximum = self.style.xmaximum
-        ymaximum = self.style.ymaximum
+        # Store the maximums for use below. We only use the style to determine if it's set or not. The
+        # value will have been computed in renpy.display.render.render(), and so we don't need to recompute
+        # it here.
 
-        if xmaximum is not None:
-            xmaximum = absolute.compute(xmaximum, width)
-        if ymaximum is not None:
-            ymaximum = absolute.compute(ymaximum, height)
+        if style.xmaximum is not None:
+            xmaximum = width
+        else:
+            xmaximum = None
+
+        if style.ymaximum is not None:
+            ymaximum = height
+        else:
+            ymaximum = None
 
         size_group = self.style.size_group
         if size_group and size_group in size_groups:
