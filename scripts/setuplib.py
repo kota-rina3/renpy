@@ -162,7 +162,7 @@ def cython(name, source=[], define_macros=[], pyx=None, language="c", compile_ar
     # Figure out what it depends on.
     deps = [fn]
 
-    with open(fn) as f:
+    with open(fn, encoding='utf-8') as f:
         for line in f:
             m = re.search(r"from\s*([\w.]+)\s*cimport", line)
             if m:
@@ -286,10 +286,10 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
         parent_module = ".".join(split_name[:-1])
         parent_module_identifier = parent_module.replace(".", "_")
 
-        with open(c_fn, "r") as f:
+        with open(c_fn, "r", encoding='utf-8') as f:
             ccode = f.read()
 
-        with open(c_fn + ".dynamic", "w") as f:
+        with open(c_fn + ".dynamic", "w", encoding='utf-8') as f:
             f.write(ccode)
 
         if len(split_name) > 1:
@@ -323,7 +323,7 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
                 flags=re.MULTILINE,
             )  # Py2 Cython 0.25.2
 
-        with open(c_fn, "w") as f:
+        with open(c_fn, "w", encoding='utf-8') as f:
             f.write(ccode)
 
 
@@ -383,13 +383,13 @@ def copyfile(source, dest, replace=None, replace_with=None):
         if os.path.getmtime(sfn) <= os.path.getmtime(dfn):
             return
 
-    with open(sfn, "r") as sf:
+    with open(sfn, "r", encoding='utf-8') as sf:
         data = sf.read()
 
     if replace and (replace_with is not None):
         data = data.replace(replace, replace_with)
 
-    with open(dfn, "w") as df:
+    with open(dfn, "w", encoding='utf-8') as df:
         df.write("# This file was automatically generated from " + source + "\n")
         df.write("# Modifications will be automatically overwritten.\n\n")
         df.write(data)

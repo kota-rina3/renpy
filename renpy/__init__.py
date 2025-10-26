@@ -126,15 +126,13 @@ class VersionTuple(NamedTuple):
     commit: int
 
 
-version_tuple = VersionTuple(*(int(i) for i in version.split(".")))
+parts = version.split(".")
+if len(parts) > 4:  # 处理 8.5.0.0+unofficial 这类格式
+    parts = parts[:4]
+version_tuple = VersionTuple(*(int(i) for i in parts))
 
 # A string giving the version number only (8.0.1.123), with a suffix if needed.
 version_only = ".".join(str(i) for i in version_tuple)
-
-if not official:
-    version_only += "+unofficial"
-elif nightly:
-    version_only += "+nightly"
 
 # A verbose string giving the version.
 version = "Ren'Py " + version_only
