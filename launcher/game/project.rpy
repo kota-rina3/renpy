@@ -357,6 +357,48 @@ init python in project:
 
             renpy.not_infinite_loop(30)
 
+        def launch_console_command(self, args=[]):
+            """
+            This launcher the project, displaying console output in a new terminal emulator window. The window will
+            remain open until the user actively closes it, making it possible to display output to the user.
+
+            `args`
+                Additional arguments to give to the project.
+            """
+
+            self.make_tmp()
+
+            # Find the python executable to run.
+            executable_path = os.path.dirname(renpy.fsdecode(sys.executable))
+
+            if renpy.renpy.windows:
+                extension = ".exe"
+            else:
+                extension = ""
+
+            executables = [ "python" + extension ]
+
+            executables.append(sys.executable)
+
+            for i in executables:
+                executable = os.path.join(executable_path, i)
+                if os.path.exists(executable):
+                    break
+            else:
+                raise Exception("Python interpreter not found: %r", executables)
+
+            # Put together the basic command line.
+            cmd = [ executable, sys.argv[0] ]
+
+            cmd.append(self.path)
+            cmd.extend(args)
+
+            from store import ConsoleCommand
+
+            console = ConsoleCommand()
+            console.add(*cmd)
+            console.run()
+
         def generate_mac_launch_string(self, cmd):
             """
             replaces the existing launch arguments,
@@ -370,7 +412,6 @@ init python in project:
                 python_launch_string += " "
 
             return ["osascript", "-e", 'tell app "Terminal" to do script "'+python_launch_string+' && exit"']
-
 
         def update_dump(self, force=False, gui=True, compile=False):
             """
@@ -873,6 +914,11 @@ init python in project:
             current = self.project
             persistent.active_project = self.project.name
 
+            try:
+                current.update_dump()
+            except Exception:
+                pass
+
             renpy.restart_interaction()
 
             if self.label is not None:
@@ -905,6 +951,11 @@ init python in project:
 
             current = p
             persistent.active_project = p.name
+
+            try:
+                current.update_dump()
+            except Exception:
+                pass
 
             renpy.restart_interaction()
 
@@ -970,6 +1021,12 @@ init python in project:
             manager.scan()
             renpy.restart_interaction()
 
+            if current is not None:
+                try:
+                    current.update_dump(force=True, gui=False)
+                except Exception:
+                    pass
+
     # NOTE: Action class for ProjectFolder
     class CollapseFolder(Action):
         def __init__(self, pf):
@@ -993,13 +1050,11 @@ init 10 python:
         if not directory_is_writable(persistent.projects_directory):
             persistent.projects_directory = None
 
-label after_load:
-    python:
-        if project.current is not None:
+    if project.current is not None:
+        try:
             project.current.update_dump()
-
-    return
-
+        except Exception:
+            pass
 
 ###############################################################################
 # Code to choose the projects directory.
