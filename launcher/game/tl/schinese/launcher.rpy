@@ -840,7 +840,7 @@
 
     # game/front_page.rpy:215
     old "Build Distributions"
-    new "编译游戏"
+    new "导出PC端游戏"
 
     # game/front_page.rpy:217
     old "Android"
@@ -1183,11 +1183,11 @@
 
     # game/itch.rpy:96
     old "The built distributions could not be found. Please choose 'Build' and try again."
-    new "未找到已编译的游戏。请点击“编译”重试。"
+    new "未找到已导出的游戏。请点击“导出”重试。"
 
     # game/itch.rpy:134
     old "No uploadable files were found. Please choose 'Build' and try again."
-    new "未找到可上传的文件。请点击“编译”重试。"
+    new "未找到可上传的文件。请点击“导出”重试。"
 
     # game/itch.rpy:140
     old "The butler program was not found."
@@ -2030,9 +2030,3 @@
 
     old "Deleting save data..."
     new "清除存档中......"
-
-    old "Launch tests"
-    new "开始测试"
-
-    old "Launching tests..."
-    new "开始测试......"

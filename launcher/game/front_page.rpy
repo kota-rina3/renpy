@@ -217,6 +217,7 @@ screen front_page_project:
                 else:
                     textbutton _("Change Theme") action Jump("choose_theme")
 
+
                 textbutton _("Delete Persistent") action Jump("rmpersistent")
                 textbutton _("Delete Savedata") action Jump("rmsavedata")
                 textbutton _("Force Recompile") action Jump("force_recompile")
