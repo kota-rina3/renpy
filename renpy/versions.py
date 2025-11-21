@@ -49,9 +49,9 @@ class Version(object):
         py_branch_to_version[(python, branch)] = self
 
 
-Version("main", 3, "8.6.0", "Real Artists Ship")
+Version("main", 3, "8.5.0.2", "NOW")
 
-Version("fix", 3, "8.5.1", "In Good Health")
+Version("fix", 3, "8.5.1", "DEV")
 
 
 def make_dict(branch, suffix="00000000", official=False, nightly=False):
@@ -105,9 +105,7 @@ def get_version():
                 break
 
     except:
-        import traceback
-
-        traceback.print_exc()
+        pass
 
     return make_dict(branch)
 

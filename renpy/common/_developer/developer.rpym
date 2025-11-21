@@ -85,6 +85,18 @@ screen _developer:
                     textbutton _("Hide Filename and Line"):
                         action Hide("_filename_and_line")
 
+                
+
+                if not renpy.get_screen("_show_write_in_recording"):
+                    textbutton _("Edit Screen Recording Board"):
+                        action ui.callsinnewcontext("_screen_recording_helper")
+
+                    textbutton _("Show Screen Recording Board"):
+                        action Show("_show_write_in_recording")
+                else:
+                    textbutton _("Hide Screen Recording Board"):
+                        action Hide("_show_write_in_recording")
+
         hbox:
             spacing gui._scale(25)
 
@@ -261,7 +273,7 @@ label _variable_viewer:
         entries.sort(key=lambda e : e[0])
 
         renpy.call_screen("_variable_viewer", _("Variable Viewer"),
-                          all_entries=entries, deleted_entries=deleted_entries)
+                        all_entries=entries, deleted_entries=deleted_entries)
 
     return
 
@@ -293,7 +305,7 @@ label _persistent_viewer:
         entries.sort(key=lambda e : e[0])
 
         renpy.call_screen("_variable_viewer", _("Persistent Viewer"),
-                          all_entries=entries, deleted_entries=None)
+                        all_entries=entries, deleted_entries=None)
 
     return
 
@@ -629,6 +641,153 @@ screen _filename_and_line():
                     size 14
                     color "#fff"
 
+define wrote1 = ""
+define wrote2 = ""
+define new_title = config.window_title
+
+screen _screen_recording_helper():
+
+    layer config.interface_layer
+    modal True
+
+    frame:
+        style_prefix ""
+
+        vbox:
+
+            textbutton _("编辑第一行文本") action ShowMenu("board_line_1")
+
+            null height 20
+
+            textbutton _("编辑第二行文本") action ShowMenu("board_line_2")
+
+            null height 20
+
+            #textbutton _("编辑录播板背景色") action ShowMenu("write_board_color")
+
+            #null height 20
+
+            textbutton _("编辑游戏标题") action ShowMenu("set_window_title")
+
+            null height 20
+
+            text "第一行预览：[wrote1]"
+
+            null height 20
+
+            text "第二行预览：[wrote2]"
+
+            null height 20
+
+            #text f"录播板背景色：{board_color}"
+
+            #null height 20
+
+            textbutton _("确定并返回") action Return()
+
+
+screen board_line_1():
+
+    layer config.interface_layer
+    modal True
+    
+    frame:
+        style_prefix ""
+        vbox:
+
+            null height 40
+
+            input:
+                id "wrote_box"
+                value VariableInputValue("wrote1", default=True, returnable=True)
+                copypaste True
+                pixel_width 800
+                multiline True
+                size 40
+
+            null height 40
+
+            textbutton _("确定并返回") action Jump("_screen_recording_helper")
+
+screen board_line_2():
+
+    layer config.interface_layer
+    modal True
+    
+    frame:
+        style_prefix ""
+        vbox:
+
+            null height 40
+
+            input:
+                id "wrote_box"
+                value VariableInputValue("wrote2", default=True, returnable=True)
+                copypaste True
+                pixel_width 800
+                multiline True
+                size 40
+
+            null height 40
+
+            textbutton _("确定并返回") action Jump("_screen_recording_helper")
+
+screen set_window_title():
+
+    layer config.interface_layer
+    modal True
+    default new_title = config.window_title
+    
+    frame:
+        style_prefix ""
+        vbox:
+
+            null height 40
+
+            input:
+                id "wrote_box"
+                value ScreenVariableInputValue("new_title", default=True, returnable=True)
+                copypaste True
+                pixel_width 10000
+                multiline True
+                size 40
+
+            null height 40
+
+            textbutton _("确定并返回") action [SetField(config, 'window_title', new_title), Jump("_screen_recording_helper")]
+
+screen _show_write_in_recording():
+    layer config.interface_layer
+    zorder 1500
+    style_prefix ""
+
+    drag:
+        draggable True
+        focus_mask None
+        xpos 0.73
+        ypos 0.75
+
+        frame:
+            style "empty"
+            background "#0004"
+            xsize 210
+            ysize 120
+
+            vbox:
+                xalign .5 yalign .5
+                text "[wrote1]" color "#fff" size 26 xalign .5 bold True
+                null height 20
+                text "[wrote2]" color "#fff" size 26 xalign .5 bold True
+
+            
+
+label _screen_recording_helper:
+
+    call _enter_game_menu
+
+    call screen _screen_recording_helper
+
+    return
 
 init 1000 python hide:
     if config.transparent_tile:
