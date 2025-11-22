@@ -591,12 +591,6 @@ label editor_check:
     if persistent.editor in persistent.ignore_obsolete_editor:
         jump post_editor_check
 
-    if result == "select":
-        $ renpy.pop_call()
-        jump editor_preference
-
-    elif result == "block":
-        $ persistent.ignore_obsolete_editor.add(persistent.editor)
 
 label post_extension_check:
     jump post_editor_check
