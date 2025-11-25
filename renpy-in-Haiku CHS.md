@@ -14,8 +14,11 @@
 把renpy给git下来：
 `cd ~/Desktop && git clone https://github.com/kota-rina3/renpy.git` 
 
+移除pyproject.toml：
+`rm -rf ./pyproject.toml`
+
 上述工作OK后，可以编译renpy了：
-`python3.12 setup.py build_ext --inplace`
+`python3.12 setup.py build_ext --inplace -j 4`
 
 > 如果提示<libhydrogen/impl/random.h>不支持此系统，请编辑random.h（就是加入这两段代码）：
 ```c
