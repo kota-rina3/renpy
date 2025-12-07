@@ -14,7 +14,7 @@
 
     # renpy/common/00accessibility.rpy:138
     old "Font Override"
-    new "字体覆盖"
+    new "字体样式"
 
     # renpy/common/00accessibility.rpy:142
     old "Default"
@@ -30,11 +30,11 @@
 
     # renpy/common/00accessibility.rpy:156
     old "Text Size Scaling"
-    new "字号缩放"
+    new "文本大小"
 
     # renpy/common/00accessibility.rpy:162
     old "Reset"
-    new "重置"
+    new "恢复默认"
 
     # renpy/common/00accessibility.rpy:168
     old "Line Spacing Scaling"
@@ -74,7 +74,7 @@
 
     # renpy/common/00accessibility.rpy:215
     old "Self-Voicing Volume Drop"
-    new "机器朗读音量降低"
+    new "降低机器朗读音量"
 
     # renpy/common/00accessibility.rpy:224
     old "The options on this menu are intended to improve accessibility. They may not work with all games, and some combinations of options may render the game unplayable. This is not an issue with the game or engine. For the best results when changing fonts, try to keep the text size the same as it originally was."
@@ -242,7 +242,7 @@
 
     # renpy/common/00action_file.rpy:445
     old "Load slot %s: [text]"
-    new "读取存档 %s：[text]"
+    new "加载存档 %s：[text]"
 
     # renpy/common/00action_file.rpy:498
     old "Delete slot [text]"
@@ -270,7 +270,7 @@
 
     # renpy/common/00action_file.rpy:913
     old "Quick save complete."
-    new "快速保存完成。"
+    new "已快速保存。"
 
     # renpy/common/00action_file.rpy:931
     old "Quick save."
@@ -278,7 +278,7 @@
 
     # renpy/common/00action_file.rpy:950
     old "Quick load."
-    new "快速读取。"
+    new "快速加载。"
 
     # renpy/common/00action_other.rpy:375
     old "Language [text]"
@@ -382,7 +382,7 @@
 
     # renpy/common/00gui.rpy:426
     old "Are you sure?"
-    new "您确定吗？"
+    new "是否确认？"
 
     # renpy/common/00gui.rpy:427
     old "Are you sure you want to delete this save?"
@@ -466,7 +466,7 @@
 
     # renpy/common/_developer/developer.rpym:38
     old "Developer Menu"
-    new "开发者菜单"
+    new "开发者选项"
 
     # renpy/common/_developer/developer.rpym:43
     old "Interactive Director (D)"
@@ -478,7 +478,7 @@
 
     # renpy/common/_developer/developer.rpym:47
     old "Console (Shift+O)"
-    new "控制台 (Shift+O)"
+    new "终端 (Shift+O)"
 
     # renpy/common/_developer/developer.rpym:49
     old "Variable Viewer"
@@ -526,7 +526,7 @@
 
     # renpy/common/_developer/developer.rpym:278
     old "Return to the developer menu"
-    new "返回到开发者菜单"
+    new "返回到开发者选项"
 
     # renpy/common/_developer/developer.rpym:443
     old "Rectangle: %r"
@@ -538,7 +538,7 @@
 
     # renpy/common/_developer/developer.rpym:453
     old "Right-click or escape to quit."
-    new "右键点击或按下 Esc 键来退出。"
+    new "右键点击或按 Esc 键退出。"
 
     # renpy/common/_developer/developer.rpym:485
     old "Rectangle copied to clipboard."
@@ -630,7 +630,7 @@
 
     # renpy/common/00updater.rpy:703
     old "Either this project does not support updating, or the update status file was deleted."
-    new "此项目不支持更新，或者是更新状态文件已被删除。"
+    new "此项目不支持更新，或更新状态文件已被删除。"
 
     # renpy/common/00updater.rpy:717
     old "This account does not have permission to perform an update."
@@ -662,7 +662,7 @@
 
     # renpy/common/00updater.rpy:1600
     old "This program is up to date."
-    new "此程序已是最新版本。"
+    new "已是最新。"
 
     # renpy/common/00updater.rpy:1602
     old "[u.version] is available. Do you want to install it?"
@@ -682,11 +682,11 @@
 
     # renpy/common/00updater.rpy:1612
     old "The updates have been installed. The program will restart."
-    new "此更新已安装。程序将重新启动。"
+    new "此更新已安装。程序将重启。"
 
     # renpy/common/00updater.rpy:1614
     old "The updates have been installed."
-    new "更新已安装。"
+    new "已成功更新。"
 
     # renpy/common/00updater.rpy:1616
     old "The updates were cancelled."
@@ -694,7 +694,7 @@
 
     # renpy/common/00gallery.rpy:627
     old "Image [index] of [count] locked."
-    new "图片 [count] / [index] 尚未解锁。"
+    new "图片 [count] / [index] 未解锁。"
 
     # renpy/common/00gallery.rpy:647
     old "prev"
@@ -746,7 +746,7 @@
 
     # renpy/common/00sync.rpy:192
     old "The Ren'Py Sync server timed out."
-    new "Ren'Py 同步服务器已超时。"
+    new "Ren'Py 同步服务器超时。"
 
     # renpy/common/00sync.rpy:194
     old "An unknown error occurred while connecting to the Ren'Py Sync server."
@@ -778,7 +778,7 @@
 
     # renpy/common/00sync.rpy:529
     old "This will upload your saves to the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}.\nDo you want to continue?"
-    new "此操作将把您的存档上传到 {a=https://sync.renpy.org}Ren'Py 同步服务器{/a} 。\n您想要继续吗？"
+    new "此操作将把您的存档上传到 {a=https://sync.renpy.org}Ren'Py 同步服务器{/a} 。\n是否继续？"
 
     # renpy/common/00sync.rpy:558
     old "Enter Sync ID"
@@ -786,7 +786,7 @@
 
     # renpy/common/00sync.rpy:569
     old "This will contact the {a=https://sync.renpy.org}Ren'Py Sync Server{/a}."
-    new "此操作将联系 {a=https://sync.renpy.org}Ren'Py 同步服务器{/a}。"
+    new "此操作将连接 {a=https://sync.renpy.org}Ren'Py 同步服务器{/a}。"
 
     # renpy/common/00sync.rpy:596
     old "Sync Success"
@@ -802,7 +802,7 @@
 
     # renpy/common/00sync.rpy:631
     old "Sync Error"
-    new "同步错误"
+    new "同步出错了"
 
     # renpy/common/00accessibility.rpy:32
     old "bar"
@@ -862,7 +862,7 @@
 
     # renpy/common/00gui.rpy:454
     old "Are you sure you want to continue where you left off?"
-    new "您确定要从上次中断的地方继续吗？"
+    new "您确定要从上次离开的地方继续吗？"
 
     # renpy/common/00preferences.rpy:288
     old "display"
@@ -1058,7 +1058,7 @@
 
     # renpy/common/00preferences.rpy:595
     old "reset"
-    new "重置"
+    new "恢复默认"
 
     # renpy/common/00preferences.rpy:608
     old "main volume"
@@ -1078,23 +1078,23 @@
 
     # renpy/common/00preferences.rpy:612
     old "mute main"
-    new "静音主要"
+    new "主静音"
 
     # renpy/common/00preferences.rpy:613
     old "mute music"
-    new "静音音乐"
+    new "音乐静音"
 
     # renpy/common/00preferences.rpy:614
     old "mute sound"
-    new "静音声音"
+    new "声音静音"
 
     # renpy/common/00preferences.rpy:615
     old "mute voice"
-    new "静音语音"
+    new "语音静音"
 
     # renpy/common/00preferences.rpy:616
     old "mute all"
-    new "静音全部"
+    new "全部静音"
 
     # renpy/common/00speechbubble.rpy:397
     old "(hide)"
@@ -1139,3 +1139,24 @@
     # renpy/common/00updater.rpy:2090
     old "Retry"
     new "重试"
+
+    old "Saving game..."
+    new "保存游戏中......"
+
+    old "Reloading script..."
+    new "脚本刷新中......"
+
+    old "Reloading game..."
+    new "重载游戏中......"
+
+    old "Mono Audio"
+    new "单声道音频"
+
+    old "Self-Voicing and Audio"
+    new "机器朗读与音频设置"
+
+    old "Text"
+    new "文本调整"
+
+    old "Kerning"
+    new "字与字间距"

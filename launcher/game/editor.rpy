@@ -151,8 +151,6 @@ init 1 python in editor:
         else:
             if renpy.arch == "aarch64":
                 arch = "arm64"
-            elif renpy.arch == "armv7l":
-                arch = "arm"
             else:
                 arch = "x64"
 
@@ -189,74 +187,31 @@ init 1 python in editor:
 
         fei.append(e)
 
-        # Atom.
-        AD = _("Atom is deprecated and its bugs are known for corrupting games, using another editor is recommended.")
-
-        if renpy.windows:
-            dlc = "atom-windows"
-            installed = os.path.exists(os.path.join(config.renpy_base, "atom/atom-windows"))
-        elif renpy.macintosh:
-            dlc = "atom-mac"
-            installed = os.path.exists(os.path.join(config.renpy_base, "atom/Atom.app"))
-        else:
-            dlc = "atom-linux"
-            installed = os.path.exists(os.path.join(config.renpy_base, "atom/atom-linux-" + platform.machine()))
-
-        if not (renpy.arch in [ "aarch64", "armv7l" ]):
-
-            e = FancyEditorInfo(
-                1,
-                _("Atom"),
-                AD,
-                "extension:atom",
-                _("Up to 150 MB download required."),
-                None,
-                deprecated=True,
-                )
-
-            e.installed = e.installed and (installed or 'RENPY_ATOM' in os.environ)
-
-            fei.append(e)
-
-        # jEdit - Only present if it exists on system.
-        e = FancyEditorInfo(
-            2,
-            _("jEdit"),
-            _("JEdit is deprecated, using another editor is recommended."),
-            "jedit",
-            _("1.8 MB download required."),
-            _("This may have occurred because Java is not installed on this system."),
-            deprecated=True,
-            )
-
-        e.installed = e.installed and os.path.exists(os.path.join(config.renpy_base, "jedit"))
-
-        fei.append(e)
 
         fei.append(FancyEditorInfo(
-            3,
+            1,
             _("Visual Studio Code (System)"),
             _("Uses a copy of Visual Studio Code that you have installed outside of Ren'Py. It's recommended you install the language-renpy extension to add support for Ren'Py files."),
             ))
 
         fei.append(FancyEditorInfo(
-            3,
+            1,
             _("System Editor"),
             _("Invokes the editor your operating system has associated with .rpy files."),
             None))
 
         for k in editors:
-            if k in [ "Visual Studio Code", "Visual Studio Code (System)", "Atom", "jEdit", "System Editor", "None" ]:
+            if k in [ "Visual Studio Code", "Visual Studio Code (System)", "System Editor", "None" ]:
                 continue
 
             fei.append(FancyEditorInfo(
-                4,
+                2,
                 k,
                 None,
                 None))
 
         fei.append(FancyEditorInfo(
-            5,
+            3,
             _("None"),
             _("Prevents Ren'Py from opening a text editor."),
             None))
@@ -636,46 +591,6 @@ label editor_check:
     if persistent.editor in persistent.ignore_obsolete_editor:
         jump post_editor_check
 
-    if persistent.editor == "Atom":
-        $ result = interface.choice(
-            _("The Atom text editor is no longer supported by its developers. We suggest switching to Visual Studio Code or another editor."), [
-                ( "select", _("Select editor now.")),
-                ( "ignore", _("Ignore until next launch.")),
-                ( "block", _("Do not ask again.")),
-            ], "select")
-
-    else:
-        jump post_atom_check
-
-    if result == "select":
-        $ renpy.pop_call()
-        jump editor_preference
-
-    elif result == "block":
-        $ persistent.ignore_obsolete_editor.add(persistent.editor)
-
-
-label post_atom_check:
-
-    if "luquedaniel.languague-renpy" in persistent.ignore_obsolete_editor:
-        jump post_extension_check
-
-    if persistent.editor != "Visual Studio Code":
-        jump post_extension_check
-
-    if editor.check_old_vscode_extension():
-        $ result = interface.choice(
-            _("You are using an old version of the Ren'Py Language support for Visual Studio Code. Would you like to upgrade?"), [
-                ( "upgrade", _("Upgrade.")),
-                ( "ignore", _("Ignore until next launch.")),
-                ( "block", _("Do not ask again.")),
-            ], "select")
-
-        if result == "upgrade":
-            jump upgrade_vscode_extension
-
-        elif result == "block":
-            $ persistent.ignore_obsolete_editor.add("luquedaniel.languague-renpy")
 
 label post_extension_check:
     jump post_editor_check

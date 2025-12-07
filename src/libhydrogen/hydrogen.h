@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #endif
 
-#ifdef __GNUC__
+#if !defined(__cplusplus) && defined(__GNUC__)
 #pragma GCC diagnostic ignored "-Wdeclaration-after-statement"
 #endif
 
