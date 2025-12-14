@@ -140,6 +140,19 @@ init -1500 python:
         if _last_voice_play is not None:
             renpy.sound.play(_last_voice_play, channel="voice")
 
+    def voice_repeat():
+        """
+        :doc: voice
+
+        Repeats the current voice, if possible.
+
+        小馋猫，真会享受
+        """
+
+        if _last_voice_play is not None:
+            renpy.sound.play(_last_voice_play, channel="voice", loop=True)
+
+
     # Returns true if we can replay the voice.
     def voice_can_replay():
         """
@@ -345,6 +358,18 @@ init -1500 python:
         def get_sensitive(self):
             return voice_can_replay()
 
+    @renpy.pure
+    class VoiceRepeat(Action, DictEquality):
+        '''
+        馋猫模式，让玩家重复播放某条语音（真会享受）
+        '''
+        def __call__(self):
+            voice_repeat()
+
+        def get_sensitive(self):
+            return voice_can_replay()
+        
+
 
     class VoiceInfo(_object):
         """
@@ -516,7 +541,6 @@ init -1500 python hide:
 
         elif _voice.play:
             if not config.skipping:
-                renpy.stop_tts()
                 renpy.music.get_channel("voice").set_volume(volume)
                 renpy.sound.play(_voice.play, channel="voice")
                 _invoke_voice_callbacks("stop")
