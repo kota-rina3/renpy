@@ -51,7 +51,7 @@ class Version:
 branch_to_version: dict[str, Version] = {}
 
 
-Version("main", (8, 5, 0, 4), "NOW")
+Version("main", (8, 5, 0), "NOW")
 
 Version("fix", (8, 5, 1), "DEV")
 
