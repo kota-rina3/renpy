@@ -39,8 +39,6 @@ class Editor(renpy.editor.Editor):
             elif renpy.linux:
                 if renpy.arch == "aarch64":
                     arch = "arm64"
-                elif renpy.arch == "armv7l":
-                    arch = "arm"
                 else:
                     arch = "x64"
 

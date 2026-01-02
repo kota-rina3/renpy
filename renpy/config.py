@@ -64,7 +64,7 @@ debug_sound = os.environ.get("RENPY_DEBUG_SOUND", False)
 rollback_enabled = True
 
 # If the rollback is longer than this, we may trim it.
-rollback_length = 128
+rollback_length = 192
 
 # If set to True, clicking while in rollback will keep the roll forward
 # buffer if the data has not changed.
@@ -98,15 +98,6 @@ image_cache_size = None
 
 # The size of the image cache, in megabytes.
 image_cache_size_mb = 400
-
-# The number of threads to use for parallel image decoding during preloading.
-# Set to 0 for automatic (based on CPU count, capped as below and always leaving
-# at least 2 free) or 1 to disable parallel decoding.
-preload_threads = 0
-
-# The maximum number of threads to use for preloading when the above is
-# set to automatic.
-preload_thread_autocap = 4
 
 # The number of statements we will analyze when doing predictive
 # loading. Please note that this is a total number of statements in a
@@ -273,7 +264,7 @@ editor_transient = None  # os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
 editor_file_separator = None  # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
 
 # Enable developer mode?
-developer = False  # Changed to True or False in the init code.
+developer = True  # Changed to True or False in the init code.
 
 # The value of developer requested by the creator (True, False, or "auto")
 original_developer = False
@@ -285,7 +276,7 @@ default_developer = False
 log = None
 
 # Clear config.log at startup
-clear_log = False
+clear_log = True
 
 # Lint hooks.
 lint_hooks = []
@@ -1636,7 +1627,7 @@ extend_like_characters: set[str] = { "extend" }
 A set of character names that will be treated like the "extend" character for the purpose of dialogue export.
 """
 
-tlid_only_considers_say: bool = True
+tlid_only_considers_say: bool = False
 """
 If True, only say statements will be assigned translation ids.
 """
@@ -1644,12 +1635,6 @@ If True, only say statements will be assigned translation ids.
 safe_text: bool = False
 """
 If True, invalid text is displayed. If False, it's ignored.
-"""
-
-special_directory_map: dict[str, list[str]] = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ] }
-"""
-This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
-be searched for that kind of file.
 """
 
 

@@ -36,23 +36,23 @@ init -1600 python:
 
         # Bindings present almost everywhere, unless explicitly
         # disabled.
-        rollback = [ 'anyrepeat_K_PAGEUP', 'anyrepeat_KP_PAGEUP', 'K_AC_BACK', 'mousedown_4' ],
-        screenshot = [ 'alt_K_s', 'alt_shift_K_s', 'noshift_K_s' ],
+        rollback = [ 'anyrepeat_K_PAGEUP', 'anyrepeat_KP_PAGEUP', 'K_AC_BACK'],
+        screenshot = [ 'K_s' ],
         toggle_afm = [ ],
-        toggle_fullscreen = [ 'alt_K_RETURN', 'alt_K_KP_ENTER', 'K_F11', 'noshift_K_f' ],
-        game_menu = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
-        hide_windows = [ 'mouseup_2', 'noshift_K_h' ],
-        launch_editor = [ 'shift_K_e' ],
+        toggle_fullscreen = [ 'K_F11', 'noshift_K_f' ],
+        game_menu = [ 'K_MENU', 'K_PAUSE','K_ESCAPE' ],
+        hide_windows = [ 'mouseup_3', 'noshift_K_h','K_ESCAPE' ],
+        launch_editor = [ ],
         dump_styles = [ ],
-        reload_game = [ 'alt_K_r', 'shift_K_r' ],
+        reload_game = [ 'shift_K_r' ],
         inspector = [ 'alt_noshift_K_i', 'shift_K_i' ],
         full_inspector = [ 'alt_shift_K_i' ],
-        developer = [ 'alt_K_d', 'shift_K_d', ],
-        quit = [ ],
-        iconify = [ ],
-        help = [ 'K_F1', 'meta_shift_/' ],
+        developer = [ 'shift_K_d' ],
+        quit = ['K_q' ],
+        iconify = [ 'K_END' ],
+        help = [ ],
         choose_renderer = ['alt_K_g', 'shift_K_g' ],
-        progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p', 'K_F2' ],
+        progress_screen = [ 'alt_shift_K_p', 'meta_shift_K_p' ],
         bubble_editor = [ 'alt_K_b', 'shift_K_b' ],
 
         # Accessibility.
@@ -63,8 +63,8 @@ init -1600 python:
         extra_voicing = [ '?' ],
 
         # Say.
-        rollforward = [ 'anyrepeat_K_PAGEDOWN', 'anyrepeat_KP_PAGEDOWN', 'mousedown_5', ],
-        dismiss = [ 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'K_SELECT', 'mouseup_1' ],
+        rollforward = [ 'anyrepeat_K_PAGEDOWN', 'anyrepeat_KP_PAGEDOWN', 'mousedown_5' ],
+        dismiss = [ 'K_RETURN', 'K_SPACE', 'K_KP_ENTER', 'K_SELECT', 'mouseup_1' , 'mousedown_5'],
         dismiss_unfocused = [ ],
 
         # Pause.
@@ -138,7 +138,7 @@ init -1600 python:
         drag_deactivate = [ 'mouseup_1' ],
 
         # Debug console.
-        console = [ 'shift_K_o', 'alt_shift_K_o' ],
+        console = [ 'shift_K_o' ],
         console_exit = [ 'K_ESCAPE', 'K_MENU', 'K_PAUSE', 'mouseup_3' ],
         console_older = [ 'anyrepeat_K_UP', 'anyrepeat_KP_UP' ],
         console_newer = [ 'anyrepeat_K_DOWN', 'anyrepeat_KP_DOWN' ],
@@ -153,7 +153,7 @@ init -1600 python:
 
         # Profile commands.
         performance = [ 'K_F3' ],
-        image_load_log = [ 'K_F4' ],
+        image_load_log = [ 'K_F1' ],
         profile_once = [ 'K_F8' ],
         memory_profile = [ 'K_F7' ],
     )
