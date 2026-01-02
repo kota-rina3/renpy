@@ -1,4 +1,4 @@
-# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -98,6 +98,15 @@ image_cache_size = None
 
 # The size of the image cache, in megabytes.
 image_cache_size_mb = 400
+
+# The number of threads to use for parallel image decoding during preloading.
+# Set to 0 for automatic (based on CPU count, capped as below and always leaving
+# at least 2 free) or 1 to disable parallel decoding.
+preload_threads = 0
+
+# The maximum number of threads to use for preloading when the above is
+# set to automatic.
+preload_thread_autocap = 4
 
 # The number of statements we will analyze when doing predictive
 # loading. Please note that this is a total number of statements in a
@@ -1627,7 +1636,7 @@ extend_like_characters: set[str] = { "extend" }
 A set of character names that will be treated like the "extend" character for the purpose of dialogue export.
 """
 
-tlid_only_considers_say: bool = False
+tlid_only_considers_say: bool = True
 """
 If True, only say statements will be assigned translation ids.
 """
@@ -1635,6 +1644,12 @@ If True, only say statements will be assigned translation ids.
 safe_text: bool = False
 """
 If True, invalid text is displayed. If False, it's ignored.
+"""
+
+special_directory_map: dict[str, list[str]] = { 'images' : [ 'images' ], 'audio' : [ 'audio' ], 'fonts' : [ 'fonts' ] }
+"""
+This maps the special directory names ('images', 'audio', 'fonts') to a list of directories that will
+be searched for that kind of file.
 """
 
 
@@ -1680,6 +1695,9 @@ def init():
     error_suggestion_handlers[renpy.display.image.ImageNotFound] = renpy.display.image.ImageNotFound.get_suggestion
 
     locale_to_language_map.update(renpy.translation.locales)
+
+    if not hasattr(renpy.config, 'special_directory_map'):
+        renpy.config.special_directory_map = {'images': ['images'], 'audio': ['audio'], 'fonts': ['fonts']}
 
 
 def post_init():
