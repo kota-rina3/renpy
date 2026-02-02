@@ -364,7 +364,7 @@ init -1400:
     define hpunch = Move((15, 0), (-15, 0), .10, bounce=True, repeat=True, delay=.275)
 
     # These use the ImageDissolve to do some nifty effects.
-    define blinds = ImageDissolve(Tile("blindstile.png"), 1.0, 8)
+    define blinds = ImageDissolve(Tile("blindstile.png"), 1.0, 256)
     define squares = ImageDissolve(Tile("squarestile.png"), 1.0, 256)
 
     transform Swing(delay=1.0, vertical=False, reverse=False, background="#000", flatten=True, new_widget=None, old_widget=None):

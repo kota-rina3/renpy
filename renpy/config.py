@@ -64,7 +64,7 @@ debug_sound = os.environ.get("RENPY_DEBUG_SOUND", False)
 rollback_enabled = True
 
 # If the rollback is longer than this, we may trim it.
-rollback_length = 128
+rollback_length = 192
 
 # If set to True, clicking while in rollback will keep the roll forward
 # buffer if the data has not changed.
@@ -273,7 +273,7 @@ editor_transient = None  # os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
 editor_file_separator = None  # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
 
 # Enable developer mode?
-developer = False  # Changed to True or False in the init code.
+developer = True  # Changed to True or False in the init code.
 
 # The value of developer requested by the creator (True, False, or "auto")
 original_developer = False
@@ -285,7 +285,7 @@ default_developer = False
 log = None
 
 # Clear config.log at startup
-clear_log = False
+clear_log = True
 
 # Lint hooks.
 lint_hooks = []
@@ -1636,7 +1636,7 @@ extend_like_characters: set[str] = { "extend" }
 A set of character names that will be treated like the "extend" character for the purpose of dialogue export.
 """
 
-tlid_only_considers_say: bool = True
+tlid_only_considers_say: bool = False
 """
 If True, only say statements will be assigned translation ids.
 """
@@ -1695,6 +1695,9 @@ def init():
     error_suggestion_handlers[renpy.display.image.ImageNotFound] = renpy.display.image.ImageNotFound.get_suggestion
 
     locale_to_language_map.update(renpy.translation.locales)
+
+    if not hasattr(renpy.config, 'special_directory_map'):
+        renpy.config.special_directory_map = {'images': ['images'], 'audio': ['audio'], 'fonts': ['fonts']}
 
 
 def post_init():

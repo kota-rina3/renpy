@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -66,8 +66,7 @@ def main():
 
     # renpy.audio
     cython(
-        "renpy.audio.renpysound",
-        [ "src/renpysound_core.c", "src/ffmedia.c" ],
+        "renpy.audio.renpysound", [ "src/renpysound_core.c", "src/ffmedia.c" ],
         compile_args=[ "-Wno-deprecated-declarations" ] if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ) else [ ],
         packages="libavformat libavcodec libavutil libswresample libswscale sdl2")
 
@@ -101,8 +100,7 @@ def main():
     cython("renpy.gl2.gl2uniform")
     cython("renpy.gl2.gl2shader")
 
-    if cubism:
-        cython("renpy.gl2.live2dmodel", [ "src/live2dcsm.c" ],)
+    cython("renpy.gl2.live2dmodel", [ "src/live2dcsm.c" ],)
 
     cython("renpy.gl2.assimp", [ "src/assimpio.cc" ], language="c++", packages="assimp sdl2")
 
