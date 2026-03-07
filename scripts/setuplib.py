@@ -32,6 +32,7 @@ import warnings
 import pathlib
 import platform
 import subprocess
+import pkgconfig
 import collections
 
 from concurrent.futures import ThreadPoolExecutor
@@ -52,9 +53,6 @@ coverage = "RENPY_COVERAGE" in os.environ
 
 # Are we doing a static build?
 static = "RENPY_STATIC" in os.environ
-
-# Are we generating without building?
-generate = (len(sys.argv) >= 2) and (sys.argv[1] == "generate")
 
 gen = "tmp/gen3"
 PY2 = False
@@ -85,13 +83,7 @@ def package_flags(*packages: str) -> dict[str, Any]:
     """
 
     rv = collections.defaultdict(list)
-
-    if generate:
-        return rv
-
     rv["include_dirs"] = include_dirs
-
-    import pkgconfig
 
     for package in packages:
         if package in pkgconfig_cache:
@@ -192,7 +184,7 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
     # Figure out what it depends on.
     deps = [fn]
 
-    with open(fn) as f:
+    with open(fn, encoding='utf-8') as f:
         for line in f:
             m = re.search(r"from\s*([\w.]+)\s*cimport", line)
             if m:
@@ -316,10 +308,10 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
         parent_module = ".".join(split_name[:-1])
         parent_module_identifier = parent_module.replace(".", "_")
 
-        with open(c_fn, "r") as f:
+        with open(c_fn, "r", encoding='utf-8') as f:
             ccode = f.read()
 
-        with open(c_fn + ".dynamic", "w") as f:
+        with open(c_fn + ".dynamic", "w", encoding='utf-8') as f:
             f.write(ccode)
 
         if len(split_name) > 1:
@@ -331,15 +323,8 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
                 count=1,
                 flags=re.DOTALL,
             )  # Py3
-            ccode = re.sub(
-                r"^__Pyx_PyMODINIT_FUNC PyInit_",
-                "__Pyx_PyMODINIT_FUNC PyInit_" + parent_module_identifier + "_",
-                ccode,
-                count=0,
-                flags=re.MULTILINE,
-            )  # Py3 Cython 0.28+
 
-        with open(c_fn, "w") as f:
+        with open(c_fn, "w", encoding='utf-8') as f:
             f.write(ccode)
 
 
@@ -399,13 +384,13 @@ def copyfile(source, dest, replace=None, replace_with=None):
         if os.path.getmtime(sfn) <= os.path.getmtime(dfn):
             return
 
-    with open(sfn, "r") as sf:
+    with open(sfn, "r", encoding='utf-8') as sf:
         data = sf.read()
 
     if replace and (replace_with is not None):
         data = data.replace(replace, replace_with)
 
-    with open(dfn, "w") as df:
+    with open(dfn, "w", encoding='utf-8') as df:
         df.write("# This file was automatically generated from " + source + "\n")
         df.write("# Modifications will be automatically overwritten.\n\n")
         df.write(data)
@@ -474,7 +459,7 @@ def setup(name, version):
     Calls the distutils setup function.
     """
 
-    if generate:
+    if (len(sys.argv) >= 2) and (sys.argv[1] == "generate"):
         return
 
     setuptools.setup(

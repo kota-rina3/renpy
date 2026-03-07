@@ -136,6 +136,9 @@ bytecode_version: int = 1
 windows: bool = False
 macintosh: bool = False
 linux: bool = False
+freebsd: bool = False
+haiku: bool = False
+openharmony: bool = False
 android: bool = False
 ios: bool = False
 emscripten: bool = False
@@ -149,6 +152,12 @@ elif os.environ.get("RENPY_PLATFORM", "").startswith("ios"):
     ios = True
 elif platform.mac_ver()[0]:
     macintosh = True
+elif platform.system() == "FreeBSD":
+    freebsd = True
+elif platform.system() == "Haiku" or sys.platform == "haiku1":
+    haiku = True
+elif platform.system() == "OpenHarmony":
+    openharmony = True
 elif "ANDROID_PRIVATE" in os.environ:
     android = True
 elif sys.platform == "emscripten" or "RENPY_EMSCRIPTEN" in os.environ:
@@ -653,8 +662,7 @@ def reload_all():
         renpy.display.draw.quit()  # type: ignore
         renpy.display.draw = None
 
-    renpy.python.compile_cache.reload()
-
+    py_compile_cache = renpy.python.py_compile_cache
     reload_modules = renpy.config.reload_modules
 
     # Delete the store modules.
@@ -672,6 +680,8 @@ def reload_all():
 
     # Restore the state of all modules from backup.
     backup.restore()
+
+    renpy.python.old_py_compile_cache = py_compile_cache
 
     renpy.display.im.reset_module()
 
