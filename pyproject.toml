@@ -13,11 +13,9 @@ dependencies = [
     "setuptools",
     "cython",
     "ruff",
-    "sphinx",
-    "sphinx_rtd_theme",
-    "sphinx_rtd_dark_mode",
-    "sphinx-tabs",
     "jinja2",
+    "assimp",
+    "legacy-cgi",
     "pkgconfig>=1.6.0",
 ]
 
