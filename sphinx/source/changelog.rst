@@ -22,10 +22,10 @@ Ren'Py Stores as Python Packages
 Ren'Py now treats Ren'Py stores as Python packages, as was documented but not implemented. This means imports can
 work from other stores. For example::
 
-  init python in store.substore1
+  init python in store.substore1:
       A = 42
 
-  init python in store.substore2
+  init python in store.substore2:
       B = 37
 
   init python:
