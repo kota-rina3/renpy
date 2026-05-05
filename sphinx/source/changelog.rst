@@ -96,6 +96,20 @@ The Persian translation of the Ren'Py tutorial has been updated.
 Features
 --------
 
+When defining styles used by :ref:`ruby text <ruby-text>` or :ref:`style text tags <style-text-tags>`, more
+style properties can be set to None to use the value from the parent text. As of this version, the following
+properties may be set to None: :propref:`antialias`, :propref:`axis`, :propref:`black_color`, :propref:`bold`,
+:propref:`color`, :propref:`font` , :propref:`font_features`, :propref:`hinting`, :propref:`instance`,
+:propref:`italic`, :propref:`size`, and :propref:`textshader`.
+
+Due to that change, When using ruby text, you may now set font None, and the font will be inherited. For example::
+
+    style ruby_style is default:
+        size 12
+        yoffset -20
+        color None # Use the same color as the parent text.
+        font None # Use the same font as the parent text.
+
 The :var:`mouse_visible` variable now has a new "always" value, which makes the mouse always visible. This is useful for
 games that need to force the mouse to be shown for minigame purposes.
 

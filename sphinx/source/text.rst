@@ -527,6 +527,8 @@ Text tags that only apply to dialogue are:
 It's also possible to define :doc:`custom text tags <custom_text_tags>` using
 Python.
 
+.. _style-text-tags:
+
 Style Text Tags
 ---------------
 
@@ -538,16 +540,25 @@ will access the ``mystyle`` style.
 The text between the tag and the corresponding closing tag has the following
 properties set to those defined in the style:
 
-* antialias
-* font
-* size
-* bold
-* italic
-* underline
-* strikethrough
-* color
-* black_color
-* kerning
+* :propref:`antialias` (May be None)
+* :propref:`axis` (May be None)
+* :propref:`black_color` (May be None)
+* :propref:`bold` (May be None)
+* :propref:`color` (May be None)
+* :propref:`font`  (May be None)
+* :propref:`font_features` (May be None)
+* :propref:`hinting` (May be None)
+* :propref:`instance` (May be None)
+* :propref:`italic` (May be None)
+* :propref:`kerning`
+* :propref:`size` (May be None)
+* :propref:`slow_cps`
+* :propref:`slow_cps_multiplier`
+* :propref:`strikethrough`
+* :propref:`textshader` (May be None)
+* :propref:`underline`
+
+When a field is None in a style, it gains its value in the parent text.
 
 
 Non-English Languages
@@ -636,12 +647,36 @@ changes are required:
    to the newly-created style, for both dialogue and history window
    text.
 
+The following taggs may be set in the new style.
+
+* :propref:`antialias` (May be None)
+* :propref:`axis` (May be None)
+* :propref:`black_color` (May be None)
+* :propref:`bold` (May be None)
+* :propref:`color` (May be None)
+* :propref:`font`  (May be None)
+* :propref:`font_features` (May be None)
+* :propref:`hinting` (May be None)
+* :propref:`instance` (May be None)
+* :propref:`italic` (May be None)
+* :propref:`kerning`
+* :propref:`size` (May be None)
+* :propref:`slow_cps`
+* :propref:`slow_cps_multiplier`
+* :propref:`strikethrough`
+* :propref:`textshader` (May be None)
+* :propref:`underline`
+* :propref:`yoffset`
+
+If property is None, it gains its value in the parent text.
+
 For example::
 
     style ruby_style is default:
         size 12
         yoffset -20
         color None # Use the same color as the parent text.
+        font None # Use the same font as the parent text.
 
     style say_dialogue:
         ruby_line_leading 12
