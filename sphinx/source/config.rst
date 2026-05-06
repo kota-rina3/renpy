@@ -711,6 +711,8 @@ Media (Music, Sound, and Video)
     This is intended for use when an a games has audio file formats changed,
     but it's not desired to update the game script.
 
+    As video files are played using the audio subsystem, this is also called for video files.
+
 .. var:: config.auto_channels = { "audio" : ( "sfx", "", ""  ), ... }
 
     This is used to define automatic audio channels. It's a map the
