@@ -36,7 +36,7 @@ class absolute(float):
         return f"absolute({float.__repr__(self)})"
 
     # Special case, should return floats.
-    def __divmod__(self, value: float,):
+    def __divmod__(self, value: float):
         return self // value, self % value
 
     def __rdivmod__(self, value: float):
