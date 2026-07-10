@@ -287,7 +287,7 @@ def import_from(from_module_name, in_module_name, *names):
             from_fullname_dot = f"{from_fullname}."
             prefix_size = len(from_fullname_dot)
 
-            for subname in tuple(filter(lambda c: c.startswith(from_fullname_dot), constants)):
+            for subname in tuple(filter(lambda c: isinstance(c, str) and c.startswith(from_fullname_dot), constants)):
                 imported_subname = f"{imported_fullname}.{subname[prefix_size:]}"
 
                 if subname in pure_functions:

@@ -284,7 +284,7 @@ class Channel(object):
         self.synchro_start = False
 
         # Does this participate in synchro start by default.
-        self.default_synchro_start: bool | renpy.object.Sentinel = synchro_start
+        self.default_synchro_start: bool|renpy.object.Sentinel = synchro_start
 
         # The time the music in this channel was last changed.
         self.last_changed = 0
@@ -299,7 +299,7 @@ class Channel(object):
         self.secondary_volume_time = None
 
         # Should we stop playing on mute?
-        self.stop_on_mute = stop_on_mute
+        self.stop_on_mute = False   #静音时仍播放，符合大多数情况
 
         # Is this channel tight?
         self.tight = tight

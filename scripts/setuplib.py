@@ -227,11 +227,7 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
                 continue
 
     # Filter out cython stdlib dependencies.
-    deps = [
-        i
-        for i in deps
-        if (not i.startswith("cpython/")) and (not i.startswith("libc/")) and (not i.startswith("libcpp"))
-    ]
+    deps = [i for i in deps if (not i.startswith("cpython/")) and (not i.startswith("libc/")) and (not i.startswith("libcpp"))]
 
     # Determine if any of the dependencies are newer than the c file.
 
@@ -279,14 +275,7 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
     if mod_coverage:
         define_macros = define_macros + [("CYTHON_TRACE", "1")]
 
-    cmodule(
-        name,
-        [c_fn] + source,
-        compile_args=compile_args,
-        define_macros=define_macros,
-        language=language,
-        packages=packages,
-    )
+    cmodule(name, [c_fn] + source, compile_args=compile_args, define_macros=define_macros, language=language, packages=packages)
 
 
 lock = threading.Condition()
@@ -344,10 +333,10 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
         parent_module = ".".join(split_name[:-1])
         parent_module_identifier = parent_module.replace(".", "_")
 
-        with open(c_fn, "r") as f:
+        with open(c_fn, "r", encoding='utf-8') as f:
             ccode = f.read()
 
-        with open(c_fn + ".dynamic", "w") as f:
+        with open(c_fn + ".dynamic", "w", encoding='utf-8') as f:
             f.write(ccode)
 
         if len(split_name) > 1:
@@ -367,7 +356,7 @@ def generate_cython(name, language, mod_coverage, split_name, fn, c_fn):
                 flags=re.MULTILINE,
             )  # Py3 Cython 0.28+
 
-        with open(c_fn, "w") as f:
+        with open(c_fn, "w", encoding='utf-8') as f:
             f.write(ccode)
 
 
@@ -427,13 +416,13 @@ def copyfile(source, dest, replace=None, replace_with=None):
         if os.path.getmtime(sfn) <= os.path.getmtime(dfn):
             return
 
-    with open(sfn, "r") as sf:
+    with open(sfn, "r", encoding='utf-8') as sf:
         data = sf.read()
 
     if replace and (replace_with is not None):
         data = data.replace(replace, replace_with)
 
-    with open(dfn, "w") as df:
+    with open(dfn, "w", encoding='utf-8') as df:
         df.write("# This file was automatically generated from " + source + "\n")
         df.write("# Modifications will be automatically overwritten.\n\n")
         df.write(data)
