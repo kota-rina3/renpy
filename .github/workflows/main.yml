@@ -1,0 +1,46 @@
+version: "1.0"
+name: renpy-ci
+displayName: Ren'Py 流水线
+stages:
+- name: 编译构建
+  displayName: 编译构建
+  strategy: fast
+  trigger: auto
+  steps:
+  - step: build@python
+    name: compile-extensions
+    displayName: 编译 Cython/C 扩展模块
+    pythonVersion: "3.12"
+    commands:
+    - apt update
+    - apt install -y python3-dev libassimp-dev libavcodec-dev libavformat-dev
+      libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev
+      libsdl3-dev libsdl3-image-dev libsdl3-mixer-dev libsdl3-ttf-dev libjpeg-dev
+      pkg-config
+    - pip config set global.index-url https://mirrors.aliyun.com/pypi/simple
+    - pip3 install setuptools cython future six typing pefile requests uv assimp legacy-cgi --break-system-packages
+    - which uv
+    - /root/.local/bin/uv sync
+    - ./run.sh --build
+    artifacts:
+    - name: renpy-build
+      path:
+      - ./
+      type: .tar.gz
+    strategy:
+      retry: "1"
+      resource:
+        cpu: "4"
+        memory: "8"
+triggers:
+  trigger: auto
+  push:
+    branches:
+      prefix: []
+      precise:
+      - feature/*
+      - fix/*
+      - release/*
+      - master
+      - fix
+      include: []
