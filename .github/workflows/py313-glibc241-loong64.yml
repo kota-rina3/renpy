@@ -47,4 +47,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: renpy-py3_13-glibc2_41-loong64
-          path: ./
+          path: ./renpy
