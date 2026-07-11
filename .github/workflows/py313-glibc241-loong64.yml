@@ -8,9 +8,16 @@ jobs:
   build:
     name: 编译构建
     runs-on: ubuntu-latest
-    container: polyarch/debian-ports
 
     steps:
+    - name: 搭建龙芯环境
+      uses: docker/setup-qemu-action@v3
+
+    - name: 拉取龙芯镜像
+      uses: addnab/docker-run-action@v3
+      with:
+        image: ghcr.io/loong64/debian:trixie
+
     - name: 检查代码
       uses: actions/checkout@v4
 
