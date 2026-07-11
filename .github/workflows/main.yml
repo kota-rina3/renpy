@@ -38,6 +38,7 @@ jobs:
           libharfbuzz-dev \
           libfreetype6-dev \
           libfribidi-dev \
+          libssl-dev \
           libsdl3-dev \
           libsdl3-image-dev \
           libsdl3-ttf-dev \
