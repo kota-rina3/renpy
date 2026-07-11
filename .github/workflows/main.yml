@@ -47,7 +47,7 @@ jobs:
     - name: 安装 Python 依赖
       run: |
         pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple
-        pip3 install setuptools cython future six typing pefile requests uv assimp legacy-cgi
+        pip3 install setuptools cython future six typing pefile requests uv assimp legacy-cgi --break-system-packages
         uv sync
 
     - name: 编译 Cython/C 扩展模块
