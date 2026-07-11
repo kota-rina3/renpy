@@ -40,10 +40,7 @@ jobs:
 
             tar -xzf uv.tar.gz -C /usr/local/bin/
 
-            uv sync
-
-            # 给构建脚本添加执行权限
-            chmod +x run.sh
+            /usr/local/bin/uv sync
 
             # 执行 Ren'Py 编译
             ./run.sh --build
