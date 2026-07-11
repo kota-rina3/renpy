@@ -9,7 +9,6 @@ jobs:
     name: 编译构建
     runs-on: ubuntu-latest
     container: polyarch/debian-ports
-    options: --platform linux/loong64
 
     steps:
     - name: 检查代码
