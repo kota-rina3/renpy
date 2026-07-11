@@ -39,7 +39,6 @@ jobs:
           libfribidi-dev \
           libsdl3-dev \
           libsdl3-image-dev \
-          libsdl3-mixer-dev \
           libsdl3-ttf-dev \
           libjpeg-dev \
           pkg-config
