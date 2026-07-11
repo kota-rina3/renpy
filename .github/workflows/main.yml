@@ -1,13 +1,8 @@
-name: Ren'Py CI
+name: Ren'Py-py3_13-glibc2_41
 
 on:
-  push:
-    branches:
-      - master
-      - fix
-      - feature/*
-      - fix/*
-      - release/*
+  workflow_dispatch:
+    branch: master
 
 jobs:
   build:
@@ -16,7 +11,7 @@ jobs:
     container: debian:13
 
     steps:
-    - name: 检出代码
+    - name: 检查代码
       uses: actions/checkout@v4
 
     - name: 安装 Python 3.13
@@ -24,7 +19,7 @@ jobs:
       with:
         python-version: "3.13"
 
-    - name: 安装系统依赖
+    - name: 安装所需依赖
       run: |
         apt update
         apt install -y \
@@ -45,17 +40,17 @@ jobs:
           libjpeg-dev \
           pkg-config
 
-    - name: 安装 Python 依赖
+    - name: 安装 Python 模块
       run: |
         pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple
         pip3 install setuptools cython future six typing pefile requests uv assimp legacy-cgi --break-system-packages
         uv sync
 
-    - name: 编译 Cython/C 扩展模块
+    - name: 编译renpy运行所需模块
       run: ./run.sh --build
 
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
       with:
-        name: renpy-build
+        name: renpy-py3_13-glibc2_41
         path: ./
