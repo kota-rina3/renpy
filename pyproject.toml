@@ -12,7 +12,6 @@ dependencies = [
     "rsa",
     "setuptools",
     "cython",
-    "ruff",
     "jinja2",
     "assimp",
     "legacy-cgi",
