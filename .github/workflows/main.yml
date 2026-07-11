@@ -13,7 +13,7 @@ jobs:
   build:
     name: 编译构建
     runs-on: ubuntu-latest
-    container: deepin:25
+    container: debian:12
 
     steps:
     - name: 检出代码
