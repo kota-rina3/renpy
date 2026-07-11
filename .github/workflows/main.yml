@@ -1,4 +1,4 @@
-name: Ren'Py-py3_13-glibc2_41
+name: Ren'Py-py3_13-glibc2_41-x86_64
 
 on:
   workflow_dispatch:
@@ -52,5 +52,5 @@ jobs:
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
       with:
-        name: renpy-py3_13-glibc2_41
+        name: renpy-py3_13-glibc2_41-x86_64
         path: ./
