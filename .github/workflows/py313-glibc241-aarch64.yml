@@ -8,8 +8,9 @@ jobs:
   build:
     name: 编译构建
     runs-on: ubuntu-latest
-    container: debian:13
-    options: --platform linux/arm64
+    container: 
+      image: debian:13
+      options: --platform linux/arm64
 
     steps:
     - name: 检查代码
