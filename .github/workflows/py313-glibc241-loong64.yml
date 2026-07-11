@@ -30,24 +30,12 @@ jobs:
               libjpeg-dev pkg-config wget curl
 
             # 设置国内 PyPI 镜像加速
-            pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple
+            pip3 config set global.index-url https://mirrors.loong64.com/pypi/simple
 
             # 安装 Python 构建依赖
-            pip3 install setuptools cython future six typing pefile requests assimp legacy-cgi --break-system-packages
+            pip3 install setuptools cython future six typing uv pefile requests assimp legacy-cgi --break-system-packages
 
-            UV_VERSION="0.8.16"   # 使用 0.8.16 或更高版本
-            curl -L "https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-loongarch64-unknown-linux-gnu.tar.gz" -o /tmp/uv.tar.gz
-
-            tar -tf /tmp/uv.tar.gz
-
-            mkdir -p /usr/local/bin
-            tar -xzf /tmp/uv.tar.gz -C /usr/local/bin/ --strip-components=1
-
-            chmod +x /usr/local/bin/uv
-            
-            cd /github/workspace
-
-            /usr/local/bin/uv sync
+            uv sync
 
             # 执行 Ren'Py 编译
             ./run.sh --build
