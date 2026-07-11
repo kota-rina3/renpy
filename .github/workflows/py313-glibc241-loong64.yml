@@ -38,7 +38,14 @@ jobs:
             UV_VERSION="0.8.16"   # 使用 0.8.16 或更高版本
             curl -L "https://github.com/astral-sh/uv/releases/download/${UV_VERSION}/uv-loongarch64-unknown-linux-gnu.tar.gz" -o /tmp/uv.tar.gz
 
-            tar -xzf /tmp/uv.tar.gz -C /usr/local/bin/
+            tar -tf /tmp/uv.tar.gz
+
+            mkdir -p /usr/local/bin
+            tar -xzf /tmp/uv.tar.gz -C /usr/local/bin/ --strip-components=1
+
+            chmod +x /usr/local/bin/uv
+            
+            cd /github/workspace
 
             /usr/local/bin/uv sync
 
