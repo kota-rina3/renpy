@@ -42,9 +42,13 @@ jobs:
             # 执行 Ren'Py 编译
             ./run.sh --build
 
+            mkdir -p /github/workspace/artifacts
+
+            cp -r ./renpy /github/workspace/artifacts/
+
       # 4. 上传构建产物（假设构建产物在项目根目录下的某个文件夹，请根据实际情况调整）
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
           name: renpy-py3_13-glibc2_41-loong64
-          path: ./renpy
+          path: ./artifacts
