@@ -1,0 +1,56 @@
+name: Ren'Py-py3_12-glibc2_38-loong64
+
+on:
+  workflow_dispatch:
+    branch: master
+
+jobs:
+  build:
+    name: 编译构建
+    runs-on: ubuntu-24.04
+    container: linuxdeepin/deepin:crimson-loong64
+
+    steps:
+    - name: 检查代码
+      uses: actions/checkout@v4
+
+    - name: 安装 Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: 安装所需依赖
+      run: |
+        apt update
+        apt install -y \
+          python3-dev \
+          python3-pip \
+          libassimp-dev \
+          libavcodec-dev \
+          libavformat-dev \
+          libswresample-dev \
+          libswscale-dev \
+          libharfbuzz-dev \
+          libfreetype6-dev \
+          libfribidi-dev \
+          libssl-dev \
+          libsdl3-dev \
+          libsdl3-image-dev \
+          libsdl3-ttf-dev \
+          libjpeg-dev \
+          pkg-config
+
+    - name: 安装 Python 模块
+      run: |
+        pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple
+        pip3 install setuptools cython future six typing pefile requests uv assimp legacy-cgi --break-system-packages
+        uv sync
+
+    - name: 编译renpy运行所需模块
+      run: ./run.sh --build
+
+    - name: 上传构建产物
+      uses: actions/upload-artifact@v4
+      with:
+        name: renpy-py3_12-glibc2_38-loong64
+        path: ./
