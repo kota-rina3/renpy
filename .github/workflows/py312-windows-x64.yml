@@ -42,9 +42,12 @@ jobs:
           mingw-w64-ucrt-x86_64-libjpeg-turbo
           mingw-w64-ucrt-x86_64-pkgconf
 
-    - name: 修补源文件编码问题
+    - name: 修补源文件兼容问题
       run: |
+        # UTF-8 编码
         sed -i 's/with open(fn) as f:/with open(fn, encoding="utf-8") as f:/' scripts/setuplib.py
+        # .pyd 没有 main，告诉 SDL 别找 SDL_main
+        sed -i 's/setuplib.extra_compile_args = \["-Wno-unused-function"\]/setuplib.extra_compile_args = ["-Wno-unused-function", "-DSDL_MAIN_HANDLED"]/' setup.py
 
     - name: 安装 Python 模块
       run: |
@@ -59,9 +62,8 @@ jobs:
         export PYDIR="$(dirname "$PY")"
         export PATH="$PYDIR:$PYDIR/Scripts:$PATH"
         export RENPY_CYTHON=cython
-        python setup.py build_ext --compiler=mingw32 -b tmp/build/lib.renpy-run -t tmp/build/tmp.renpy-run --inplace 2>&1 | tee build.log
-        echo "=== Last 80 lines of build log ==="
-        tail -80 build.log
+        export CPUS=$(nproc)
+        python setup.py build_ext --compiler=mingw32 -b tmp/build/lib.renpy-run -t tmp/build/tmp.renpy-run --inplace -j $CPUS
 
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
