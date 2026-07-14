@@ -42,6 +42,10 @@ jobs:
           mingw-w64-ucrt-x86_64-libjpeg-turbo
           mingw-w64-ucrt-x86_64-pkgconf
 
+    - name: 修补源文件编码问题
+      run: |
+        sed -i 's/with open(fn) as f:/with open(fn, encoding="utf-8") as f:/' scripts/setuplib.py
+
     - name: 安装 Python 模块
       run: |
         export PY="$(cygpath -u '${{ steps.py.outputs.python-path }}')"
@@ -50,15 +54,13 @@ jobs:
         python -m pip install setuptools cython future six typing pefile requests assimp legacy-cgi pkgconfig chardet websockets pysocks jinja2 rsa
 
     - name: 编译renpy运行所需模块
-      env:
-        CC: gcc
       run: |
         export PY="$(cygpath -u '${{ steps.py.outputs.python-path }}')"
         export PYDIR="$(dirname "$PY")"
         export PATH="$PYDIR:$PYDIR/Scripts:$PATH"
         export RENPY_CYTHON=cython
         export CPUS=$(nproc)
-        python setup.py build_ext -b tmp/build/lib.renpy-run -t tmp/build/tmp.renpy-run --inplace -j $CPUS
+        python setup.py build_ext --compiler=mingw32 -b tmp/build/lib.renpy-run -t tmp/build/tmp.renpy-run --inplace -j $CPUS
 
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
