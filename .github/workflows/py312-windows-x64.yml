@@ -44,9 +44,7 @@ jobs:
 
     - name: 修补源文件兼容问题
       run: |
-        # UTF-8 编码
         sed -i 's/with open(fn) as f:/with open(fn, encoding="utf-8") as f:/' scripts/setuplib.py
-        # .pyd 没有 main，告诉 SDL 别找 SDL_main
         sed -i 's/setuplib.extra_compile_args = \["-Wno-unused-function"\]/setuplib.extra_compile_args = ["-Wno-unused-function", "-DSDL_MAIN_HANDLED"]/' setup.py
 
     - name: 安装 Python 模块
@@ -57,13 +55,20 @@ jobs:
         python -m pip install setuptools cython future six typing pefile requests assimp legacy-cgi pkgconfig chardet websockets pysocks jinja2 rsa
 
     - name: 编译renpy运行所需模块
+      env:
+        DISTUTILS_DEBUG: 1
       run: |
         export PY="$(cygpath -u '${{ steps.py.outputs.python-path }}')"
         export PYDIR="$(dirname "$PY")"
         export PATH="$PYDIR:$PYDIR/Scripts:$PATH"
         export RENPY_CYTHON=cython
-        export CPUS=$(nproc)
-        python setup.py build_ext --compiler=mingw32 -b tmp/build/lib.renpy-run -t tmp/build/tmp.renpy-run --inplace -j $CPUS
+        python setup.py build_ext --compiler=mingw32 -b tmp/build/lib.renpy-run -t tmp/build/tmp.renpy-run --inplace > build.log 2>&1
+        BUILD_EXIT=$?
+        echo "=== last 80 lines ==="
+        tail -80 build.log
+        echo "=== errors ==="
+        grep -i "undefined\|cannot find\|error:" build.log | head -30
+        exit $BUILD_EXIT
 
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
