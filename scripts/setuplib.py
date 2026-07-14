@@ -209,7 +209,7 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
 
         return mod_name.replace(".", "/") + ".pxd"
 
-    with open(fn) as f:
+    with open(fn, encoding="utf-8") as f:
         for line in f:
             m = re.search(r"from\s*([\w.]+)\s*cimport", line)
             if m:
