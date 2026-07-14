@@ -42,9 +42,10 @@ jobs:
           mingw-w64-ucrt-x86_64-libjpeg-turbo
           mingw-w64-ucrt-x86_64-pkgconf
 
-    - name: 修补源文件编码问题
+    - name: 修补源文件编码问题 & C++ 链接兼容
       run: |
         sed -i 's/with open(fn) as f:/with open(fn, encoding="utf-8") as f:/' scripts/setuplib.py
+        sed -i 's/setuplib.extra_link_args = \[\]/setuplib.extra_link_args = ["-static-libgcc", "-static-libstdc++"]/' setup.py
 
     - name: 安装 Python 模块
       run: |
