@@ -9,6 +9,10 @@ jobs:
     name: 编译构建
     runs-on: windows-latest
 
+    defaults:
+      run:
+        shell: msys2 {0}
+
     steps:
     - name: 检查代码
       uses: actions/checkout@v4
@@ -18,40 +22,35 @@ jobs:
       with:
         python-version: "3.12"
 
-    - name: 安装 vcpkg C 库依赖
-      run: |
-        vcpkg install --triplet x64-windows `
-          sdl3 `
-          sdl3-image[jpeg,png] `
-          sdl3-ttf `
-          ffmpeg[core,avcodec,avformat,avutil,swresample,swscale] `
-          freetype `
-          harfbuzz `
-          fribidi `
-          assimp `
-          openssl `
-          libjpeg-turbo `
-          libpng `
-          pkgconf
-
-    - name: 修补 GCC 专用编译选项（适配 MSVC）
-      run: |
-        # setup.py: 移除 -Wno-unused-function
-        (Get-Content setup.py) -replace 'setuplib\.extra_compile_args = \["-Wno-unused-function"\]', 'setuplib.extra_compile_args = []' | Set-Content setup.py
-        # setuplib.py: 注释掉 -std=gnu99
-        (Get-Content scripts/setuplib.py) -replace 'kwargs\["extra_compile_args"\]\.insert\(0, "-std=gnu99"\)', '# MSVC does not support -std=gnu99' | Set-Content scripts/setuplib.py
+    - name: 安装 MSYS2 编译工具链及 C 库（不装 MSYS2 Python）
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: UCRT64
+        update: true
+        install: >-
+          mingw-w64-ucrt-x86_64-gcc
+          mingw-w64-ucrt-x86_64-sdl3
+          mingw-w64-ucrt-x86_64-sdl3-image
+          mingw-w64-ucrt-x86_64-sdl3-ttf
+          mingw-w64-ucrt-x86_64-ffmpeg
+          mingw-w64-ucrt-x86_64-freetype
+          mingw-w64-ucrt-x86_64-harfbuzz
+          mingw-w64-ucrt-x86_64-fribidi
+          mingw-w64-ucrt-x86_64-assimp
+          mingw-w64-ucrt-x86_64-openssl
+          mingw-w64-ucrt-x86_64-libjpeg-turbo
+          mingw-w64-ucrt-x86_64-pkgconf
 
     - name: 安装 Python 模块
       run: |
-        pip install setuptools cython future six typing pefile requests uv assimp legacy-cgi --break-system-packages
-        uv sync
+        pip install setuptools cython future six typing pefile requests assimp legacy-cgi pkgconfig chardet websockets pysocks jinja2 rsa
 
     - name: 编译renpy运行所需模块
       env:
         RENPY_CYTHON: cython
-        PKG_CONFIG_PATH: ${{ github.workspace }}\vcpkg_installed\x64-windows\lib\pkgconfig
+        CC: gcc
       run: |
-        $CPUS = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
+        export CPUS=$(nproc)
         python setup.py build_ext -b tmp/build/lib.renpy-run -t tmp/build/tmp.renpy-run --inplace -j $CPUS
 
     - name: 上传构建产物
