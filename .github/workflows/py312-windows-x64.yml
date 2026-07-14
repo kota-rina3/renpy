@@ -30,7 +30,6 @@ jobs:
         update: true
         install: >-
           mingw-w64-ucrt-x86_64-gcc
-          mingw-w64-ucrt-x86_64-binutils
           mingw-w64-ucrt-x86_64-sdl3
           mingw-w64-ucrt-x86_64-sdl3-image
           mingw-w64-ucrt-x86_64-sdl3-ttf
@@ -43,19 +42,9 @@ jobs:
           mingw-w64-ucrt-x86_64-libjpeg-turbo
           mingw-w64-ucrt-x86_64-pkgconf
 
-    - name: 为 MinGW 生成 Python 导入库
-      run: |
-        export PY="$(cygpath -u '${{ steps.py.outputs.python-path }}')"
-        export PYDLL="$(dirname "$PY")/python312.dll"
-        cd "$(dirname "$PY")/libs"
-        gendef "$PYDLL"
-        dlltool -d python312.def -l libpython312.dll.a -D "$PYDLL"
-        echo "Generated libpython312.dll.a"
-
-    - name: 修补源文件编码问题 & C++ 链接兼容
+    - name: 修补源文件编码问题
       run: |
         sed -i 's/with open(fn) as f:/with open(fn, encoding="utf-8") as f:/' scripts/setuplib.py
-        sed -i 's/setuplib.extra_link_args = \[\]/setuplib.extra_link_args = ["-static-libgcc", "-static-libstdc++"]/' setup.py
 
     - name: 安装 Python 模块
       run: |
@@ -70,8 +59,9 @@ jobs:
         export PYDIR="$(dirname "$PY")"
         export PATH="$PYDIR:$PYDIR/Scripts:$PATH"
         export RENPY_CYTHON=cython
-        export CPUS=$(nproc)
-        python setup.py build_ext --compiler=mingw32 -b tmp/build/lib.renpy-run -t tmp/build/tmp.renpy-run --inplace -j $CPUS
+        python setup.py build_ext --compiler=mingw32 -b tmp/build/lib.renpy-run -t tmp/build/tmp.renpy-run --inplace 2>&1 | tee build.log
+        echo "=== Last 80 lines of build log ==="
+        tail -80 build.log
 
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
