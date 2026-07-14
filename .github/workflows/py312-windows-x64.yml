@@ -43,7 +43,7 @@ jobs:
 
     - name: 安装 Python 模块
       run: |
-        pip install setuptools cython future six typing pefile requests assimp legacy-cgi pkgconfig chardet websockets pysocks jinja2 rsa
+        python -m pip install setuptools cython future six typing pefile requests assimp legacy-cgi pkgconfig chardet websockets pysocks jinja2 rsa
 
     - name: 编译renpy运行所需模块
       env:
