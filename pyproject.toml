@@ -17,7 +17,7 @@ dependencies = [
     "legacy-cgi",
     "pkgconfig>=1.6.0",
     "chardet>=7.4.3",
-    "websockets>=16.0",
+    "websockets>=16.1",
     "pysocks>=1.7.1",
 ]
 
