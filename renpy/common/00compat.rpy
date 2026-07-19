@@ -374,6 +374,10 @@ python early hide:
         if script_version >= (8, 0, 0) and script_version < (8, 2, 0):
             config.future_annotations = True
 
+        if script_version <= (7, 8, 7):
+            import sys, pickle
+            sys.modules['cPickle'] = pickle
+
         if script_version <= (7, 2, 2):
             config.keyword_after_python = True
 
@@ -490,3 +494,6 @@ init 1100 python hide:
 
     config.max_texture_size = (max(config.max_texture_size[0], config.fbo_size[0]),
                                max(config.max_texture_size[1], config.fbo_size[1]))
+
+# game compat
+default persistent.lernardo = 0 # The Expression Amrilato

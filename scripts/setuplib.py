@@ -209,7 +209,7 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
 
         return mod_name.replace(".", "/") + ".pxd"
 
-    with open(fn) as f:
+    with open(fn, encoding="utf-8") as f:
         for line in f:
             m = re.search(r"from\s*([\w.]+)\s*cimport", line)
             if m:
@@ -227,11 +227,7 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
                 continue
 
     # Filter out cython stdlib dependencies.
-    deps = [
-        i
-        for i in deps
-        if (not i.startswith("cpython/")) and (not i.startswith("libc/")) and (not i.startswith("libcpp"))
-    ]
+    deps = [i for i in deps if (not i.startswith("cpython/")) and (not i.startswith("libc/")) and (not i.startswith("libcpp"))]
 
     # Determine if any of the dependencies are newer than the c file.
 
@@ -279,14 +275,7 @@ def cython(name, source=[], pyx=None, language="c", compile_args=[], define_macr
     if mod_coverage:
         define_macros = define_macros + [("CYTHON_TRACE", "1")]
 
-    cmodule(
-        name,
-        [c_fn] + source,
-        compile_args=compile_args,
-        define_macros=define_macros,
-        language=language,
-        packages=packages,
-    )
+    cmodule(name, [c_fn] + source, compile_args=compile_args, define_macros=define_macros, language=language, packages=packages)
 
 
 lock = threading.Condition()
@@ -396,13 +385,13 @@ def copyfile(source, dest, replace=None, replace_with=None):
         if os.path.getmtime(sfn) <= os.path.getmtime(dfn):
             return
 
-    with open(sfn, "r") as sf:
+    with open(sfn, "r", encoding='utf-8') as sf:
         data = sf.read()
 
     if replace and (replace_with is not None):
         data = data.replace(replace, replace_with)
 
-    with open(dfn, "w") as df:
+    with open(dfn, "w", encoding='utf-8') as df:
         df.write("# This file was automatically generated from " + source + "\n")
         df.write("# Modifications will be automatically overwritten.\n\n")
         df.write(data)

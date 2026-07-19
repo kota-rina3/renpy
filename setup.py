@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2004-2025 Tom Rothamel <pytom@bishoujo.us>
+# Copyright 2004-2026 Tom Rothamel <pytom@bishoujo.us>
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -49,8 +49,7 @@ def main():
     setuplib.extra_link_args = []
 
     cubism = os.environ.get("CUBISM", None)
-    if cubism:
-        setuplib.include_dirs.append("{}/Core/include".format(cubism))
+    setuplib.include_dirs.append("{}/Core/include".format(cubism))
 
     # src/ directory.
     cython("_renpy", ["src/IMG_savepng.c", "src/core.c"], packages="sdl3 libpng")
@@ -58,11 +57,7 @@ def main():
     # renpy.pygame
     cython("renpy.pygame.iostream", packages="sdl3")
     cython("renpy.pygame.locals", packages="sdl3")
-    cython(
-        "renpy.pygame.image",
-        source=["src/pygame/write_png.c", "src/pygame/write_jpeg.c"],
-        packages="sdl3-image libjpeg libpng sdl3",
-    )
+    cython("renpy.pygame.image", source=[ "src/pygame/write_png.c", "src/pygame/write_jpeg.c" ], packages="sdl3-image libjpeg libpng sdl3")
     cython("renpy.pygame.sdl_image", packages="sdl3")
     cython("renpy.pygame.controller", packages="sdl3")
     cython("renpy.pygame.joystick", packages="sdl3")
@@ -80,11 +75,7 @@ def main():
     cython("renpy.pygame.error", packages="sdl3")
     cython("renpy.pygame.surface", packages="sdl3")
     cython("renpy.pygame.draw", packages="sdl3")
-    cython(
-        "renpy.pygame.gfxdraw",
-        source=["src/pygame/SDL3_gfxPrimitives.c", "src/pygame/SDL3_rotozoom.c"],
-        packages="sdl3",
-    )
+    cython("renpy.pygame.gfxdraw", source=[ "src/pygame/SDL3_gfxPrimitives.c",  "src/pygame/SDL3_rotozoom.c" ], packages="sdl3")
 
     # renpy
     cython("renpy.astsupport")
@@ -98,13 +89,9 @@ def main():
 
     # renpy.audio
     cython(
-        "renpy.audio.renpysound",
-        ["src/renpysound_core.c", "src/ffmedia.c"],
-        compile_args=["-Wno-deprecated-declarations"]
-        if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ)
-        else [],
-        packages="libavformat libavcodec libavutil libswresample libswscale sdl3",
-    )
+        "renpy.audio.renpysound", [ "src/renpysound_core.c", "src/ffmedia.c" ],
+        compile_args=["-Wno-deprecated-declarations"] if ("RENPY_FFMPEG_NO_DEPRECATED_DECLARATIONS" in os.environ) else [],
+        packages="libavformat libavcodec libavutil libswresample libswscale sdl3")
 
     cython("renpy.audio.filter")
 
@@ -136,8 +123,7 @@ def main():
     cython("renpy.gl2.gl2uniform")
     cython("renpy.gl2.gl2shader")
 
-    if cubism:
-        cython("renpy.gl2.live2dmodel", ["src/live2dcsm.c"], packages="sdl3")
+    cython("renpy.gl2.live2dmodel", [ "src/live2dcsm.c" ], packages="sdl3")
 
     cython("renpy.gl2.assimp", ["src/assimpio.cc"], language="c++", packages="assimp sdl3")
 
