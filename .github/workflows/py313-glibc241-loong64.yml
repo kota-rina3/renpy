@@ -1,0 +1,48 @@
+name: Ren'Py-py3_13-glibc2_41-loong64
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: 编译构建 (loong64)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+
+    - name: 设置 QEMU（loong64 模拟）
+      uses: docker/setup-qemu-action@v3
+
+    - name: 在龙芯容器中编译
+      run: |
+        docker run --platform linux/loong64 \
+          -v "${{ github.workspace }}:/workspace" \
+          -w /workspace \
+          ghcr.io/loong64/debian:trixie \
+          bash -c '
+            set -e
+
+            apt update
+            apt install -y \
+              python3-dev python3-pip \
+              libassimp-dev libavcodec-dev libavformat-dev \
+              libswresample-dev libswscale-dev libharfbuzz-dev \
+              libfreetype6-dev libfribidi-dev libssl-dev \
+              libsdl3-dev libsdl3-image-dev libsdl3-ttf-dev \
+              libjpeg-dev pkg-config wget curl
+
+            pip3 config set global.index-url https://mirrors.loong64.com/pypi/simple
+
+            pip3 install setuptools cython future six typing uv pefile requests assimp legacy-cgi --break-system-packages
+
+            uv sync
+
+            ./run.sh --build
+          '
+    - name: 上传构建产物
+      uses: actions/upload-artifact@v4
+      with:
+        name: renpy-py3_13-glibc2_41-loong64
+        path: ./
