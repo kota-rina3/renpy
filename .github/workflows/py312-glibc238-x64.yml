@@ -49,6 +49,7 @@ jobs:
     - name: 编译renpy运行所需模块
       run: |
         ./run.sh --build
+        cp -R renpy renpy.py *.so ./ayasaki/
         mkdir ./ayasaki
 
     - name: 上传构建产物
