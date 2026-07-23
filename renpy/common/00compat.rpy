@@ -385,6 +385,7 @@ python early hide:
         config.early_script_version = None
         config.early_developer = True
         config.safe_text = False
+        config.open_file_encoding = "utf-8"
         pass
 
 
