@@ -41,12 +41,21 @@ jobs:
         run: |
           pacman -Syu --noconfirm
 
+      # 不用 uv（Rust/maturin 在 MSYS2 上无法编译），手动建 venv + pip 安装
       - name: 安装 Python 模块
         shell: msys2 {0}
         run: |
           set -e
-          pip install uv
-          uv sync
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install --ignore-requires-python \
+            future six pefile requests rsa \
+            setuptools cython jinja2 \
+            "legacy-cgi" "pkgconfig>=1.6.0" \
+            "chardet>=7.4.3" "websockets>=16.1" \
+            "pysocks>=1.7.1" \
+            assimp
 
       - name: 编译 Ren'Py C 扩展模块
         shell: msys2 {0}
