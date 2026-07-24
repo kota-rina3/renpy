@@ -38,6 +38,7 @@ GL_SWAP_CONTROL = -1
 # True if we are on ios.
 ios = ("PYGAME_IOS" in os.environ)
 
+
 # This inits SDL proper, and should be called by the other init methods.
 
 # A map from a renpy.pygame hint to what it was set to.
