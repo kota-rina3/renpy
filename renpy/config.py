@@ -798,6 +798,9 @@ translate_comments = []
 # Should we try detect user locale on first launch?
 enable_language_autodetect = False
 
+# If False, the game will exit with a message when launched a second time.
+allow_second_launch = True
+
 # A function from (locale, region) -> existing language.
 locale_to_language_function = None
 
