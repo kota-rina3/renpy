@@ -23,9 +23,9 @@ jobs:
             mingw-w64-ucrt-x86_64-python-pip
             mingw-w64-ucrt-x86_64-cython
             mingw-w64-ucrt-x86_64-pkgconf
-            mingw-w64-ucrt-x86_64-SDL3
-            mingw-w64-ucrt-x86_64-SDL3_image
-            mingw-w64-ucrt-x86_64-SDL3_ttf
+            mingw-w64-ucrt-x86_64-sdl3
+            mingw-w64-ucrt-x86_64-sdl3-image
+            mingw-w64-ucrt-x86_64-sdl3-ttf
             mingw-w64-ucrt-x86_64-libpng
             mingw-w64-ucrt-x86_64-libjpeg-turbo
             mingw-w64-ucrt-x86_64-openssl
@@ -34,6 +34,12 @@ jobs:
             mingw-w64-ucrt-x86_64-harfbuzz
             mingw-w64-ucrt-x86_64-fribidi
             mingw-w64-ucrt-x86_64-assimp
+
+      # 显式执行 pacman -Syu 刷新所有仓库（含 ucrt64）的包数据库
+      - name: 更新 MSYS2 软件源
+        shell: msys2 {0}
+        run: |
+          pacman -Syu --noconfirm
 
       - name: 安装 Python 模块
         shell: msys2 {0}
