@@ -12,16 +12,20 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 配置 MSYS2 UCRT64 环境
+      # Python 3.12 用 Windows 原生版本，MSYS2 UCRT64 当前只有 3.14，与 Ren'Py 不兼容
+      - name: 安装 Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # MSYS2 只提供编译工具链和 C 库，不装 MSYS2 的 Python
+      - name: 配置 MSYS2 UCRT64 工具链
         uses: msys2/setup-msys2@v2
         with:
           msystem: ucrt64
           update: true
           install: >-
             mingw-w64-ucrt-x86_64-gcc
-            mingw-w64-ucrt-x86_64-python
-            mingw-w64-ucrt-x86_64-python-pip
-            mingw-w64-ucrt-x86_64-cython
             mingw-w64-ucrt-x86_64-pkgconf
             mingw-w64-ucrt-x86_64-sdl3
             mingw-w64-ucrt-x86_64-sdl3-image
@@ -35,21 +39,21 @@ jobs:
             mingw-w64-ucrt-x86_64-fribidi
             mingw-w64-ucrt-x86_64-assimp
 
-      # 显式执行 pacman -Syu 刷新所有仓库（含 ucrt64）的包数据库
-      - name: 更新 MSYS2 软件源
-        shell: msys2 {0}
-        run: |
-          pacman -Syu --noconfirm
-
-      # 不用 uv（Rust/maturin 在 MSYS2 上无法编译），手动建 venv + pip 安装
-      - name: 安装 Python 模块
+      # 确保 Windows Python 3.12 优先于 MSYS2 自带的任何 Python
+      - name: 安装 Python 依赖
         shell: msys2 {0}
         run: |
           set -e
+
+          # 将 Windows Python 3.12 放在 PATH 最前面
+          WINDOWS_PYTHON_DIR="$(cygpath -u "$pythonLocation")"
+          export PATH="$WINDOWS_PYTHON_DIR:$WINDOWS_PYTHON_DIR/Scripts:$PATH"
+
+          python --version
           python -m venv .venv
           source .venv/bin/activate
           pip install --upgrade pip
-          pip install --ignore-requires-python \
+          pip install \
             future six pefile requests rsa \
             setuptools cython jinja2 \
             "legacy-cgi" "pkgconfig>=1.6.0" \
@@ -61,6 +65,16 @@ jobs:
         shell: msys2 {0}
         run: |
           set -e
+
+          # 确保 Windows Python 优先
+          WINDOWS_PYTHON_DIR="$(cygpath -u "$pythonLocation")"
+          export PATH="$WINDOWS_PYTHON_DIR:$WINDOWS_PYTHON_DIR/Scripts:$PATH"
+
+          # 指定使用 MinGW gcc
+          export CC=gcc
+          export CXX=g++
+          export LD=ld
+
           ./run.sh --build
 
       - name: 收集构建产物
@@ -69,7 +83,6 @@ jobs:
           set -e
           mkdir -p ./ayasaki
           cp -R renpy renpy.py ./ayasaki/
-          # Windows/MinGW 编译产物后缀为 .pyd
           cp -n *.pyd ./ayasaki/ 2>/dev/null || true
           cp -n *.dll ./ayasaki/ 2>/dev/null || true
 
