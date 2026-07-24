@@ -40,9 +40,11 @@ jobs:
             uv sync
 
             ./run.sh --build
+            mkdir ./ayasaki
+            cp -R renpy renpy.py *.so ./ayasaki/
           '
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
       with:
         name: renpy-py3_13-glibc2_41-loong64
-        path: ./
+        path: ./ayasaki
