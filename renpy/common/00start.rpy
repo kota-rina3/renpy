@@ -216,6 +216,40 @@ label _start:
     python:
         _init_language()
 
+        # Detect and potentially deny a second launch of the game.
+        if not _restart:
+            import os
+            if renpy.config.allow_second_launch is False:
+                duplicate = False
+                if renpy.windows:
+                    import ctypes
+                    try:
+                        kernel32 = ctypes.windll.kernel32
+                        mutex_name = "RenPy_SingleInstance_" + renpy.config.save_directory
+                        mutex = kernel32.CreateMutexW(None, False, mutex_name)
+                        if kernel32.GetLastError() == 183:  # ERROR_ALREADY_EXISTS
+                            duplicate = True
+                    except Exception:
+                        pass
+                else:
+                    lockfile = os.path.join(renpy.config.savedir, "game.lock")
+                    if os.path.exists(lockfile):
+                        try:
+                            with open(lockfile, "r") as f:
+                                old_pid = int(f.read().strip())
+                            os.kill(old_pid, 0)  # Check if process is alive
+                            duplicate = True
+                        except (ValueError, OSError):
+                            pass  # Stale lock file
+                    try:
+                        with open(lockfile, "w") as f:
+                            f.write(str(os.getpid()))
+                    except OSError:
+                        pass
+                if duplicate:
+                    renpy.say(None, "游戏不允许二次运行。")
+                    renpy.quit(relaunch=False)
+
         # Predict the main menu. When a load occurs, the loaded data will
         # overwrite the prediction requests.
         if renpy.has_screen("main_menu"):

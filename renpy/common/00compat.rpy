@@ -360,6 +360,24 @@ init -1100 python:
     # None if it's intended for the current version.
     config.script_version = None
 
+init -1100 python:
+    import sys, types
+
+    class _StubClass:
+        """万能桩：pickle 反序列化时遇到的任何类都返回这个"""
+        def __reduce__(self):
+            return (_StubClass, ())
+
+    class _PadRemapModule(types.ModuleType):
+        """fake store.pad_remap 模块——任何属性访问都返回 _StubClass"""
+        def __getattr__(self, name):
+            if name.startswith("_"):
+                raise AttributeError(name)
+            return _StubClass
+
+    if "store.pad_remap" not in sys.modules:
+        sys.modules["store.pad_remap"] = _PadRemapModule("store.pad_remap")
+
 python early hide:
     try:
         import ast
@@ -374,6 +392,10 @@ python early hide:
         if script_version >= (8, 0, 0) and script_version < (8, 2, 0):
             config.future_annotations = True
 
+        if script_version <= (7, 8, 7):
+            import sys, pickle
+            sys.modules['cPickle'] = pickle
+
         if script_version <= (7, 2, 2):
             config.keyword_after_python = True
 
@@ -381,6 +403,7 @@ python early hide:
         config.early_script_version = None
         config.early_developer = True
         config.safe_text = False
+        config.open_file_encoding = "utf-8"
         pass
 
 
@@ -490,3 +513,6 @@ init 1100 python hide:
 
     config.max_texture_size = (max(config.max_texture_size[0], config.fbo_size[0]),
                                max(config.max_texture_size[1], config.fbo_size[1]))
+
+# game compat
+default persistent.lernardo = 0 # The Expression Amrilato

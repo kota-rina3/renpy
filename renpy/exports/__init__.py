@@ -468,6 +468,7 @@ from renpy.exports.loaderexports import (
     fsdecode as fsdecode,
     fsencode as fsencode,
     list_files as list_files,
+    load_toml as load_toml,
     loadable as loadable,
     munge as munge,
     notl_file as notl_file,
@@ -595,11 +596,9 @@ from renpy.exports.scriptexports import (
 )
 
 from renpy.exports.statementexports import (
-    StatementInfo as StatementInfo,
     call_screen as call_screen,
     call as call,
     execute_default_statement as execute_default_statement,
-    get_statement_info as get_statement_info,
     get_statement_name as get_statement_name,
     imagemap as imagemap,
     jump as jump,

@@ -2,6 +2,15 @@
 The Ren'Py Visual Novel Engine
 ==============================
 
+English `简体中文 <https://github.com/kota-rina3/renpy/blob/master/README_CN.md>`_
+
+.. image:: https://img.shields.io/github/stars/kota-rina3/renpy
+.. image:: https://img.shields.io/badge/platform-Windows%20%7C%20MacOS%20%7C%20Linux%20%7C%20FreeBSD%20%7C%20HaikuOS-yellow
+.. image:: https://img.shields.io/badge/CPU_architecture-x64%20%7C%20arm64%20%7C%20loong64-%23ea4300
+.. image:: https://img.shields.io/badge/deepin_package_name-otohime.renpy.ayasaki.otome-0050ff
+.. image:: https://img.shields.io/github/v/release/kota-rina3/renpy
+.. image:: https://img.shields.io/github/downloads/kota-rina3/renpy/total
+
 https://www.renpy.org
 
 
@@ -73,13 +82,14 @@ your system. On Ubuntu and Debian, these dependencies can be installed with
 the command::
 
     sudo apt install python3-dev libassimp-dev libavcodec-dev libavformat-dev \
-        libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl2-dev \
-        libsdl2-image-dev libsdl2-gfx-dev libsdl2-mixer-dev libsdl2-ttf-dev libjpeg-dev pkg-config
+        libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl3-dev \
+        libsdl3-image-dev libsdl3-mixer-dev libsdl3-ttf-dev libjpeg-dev pkg-config \
+        python3-legacy-cgi
 
-Ren'Py requires SDL_image 2.6 or greater. If your distribution doesn't include
+Ren'Py requires SDL_image 3.2 or greater. If your distribution doesn't include
 that version, you'll need to download it from:
 
-    https://github.com/libsdl-org/SDL_image/tree/SDL2
+    https://github.com/libsdl-org/SDL_image/
 
 We strongly suggest using a package manager to create virtual environment and
 manage dependencies. We have tested with `uv <https://docs.astral.sh/uv/>`_ but
@@ -90,7 +100,7 @@ install dependencies, open a new terminal and run::
 
 After that, compile extension modules and run Ren'Py using the command::
 
-    ./run.sh
+    ./run.sh --build
 
 
 Other Platforms
