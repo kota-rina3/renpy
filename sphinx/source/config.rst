@@ -1008,7 +1008,7 @@ Paths
 .. var:: config.basedir = ...
 
     The full path leading to the game's base directory. This is a read-only
-    variable. This is usually the directory above the :file:`game/` directory. It contains logs like :doc:`log.txt`
+    variable. This is usually the directory above the :file:`game/` directory. It contains logs like :file:`log.txt`
     and on PC plaforms contains the executable used to launch the game. There is no guarantee any file will be there,
     as on Android files are stored inside the package.
 
@@ -2153,7 +2153,7 @@ Translation
 
 .. var:: config.translate_ignore_who = [ ]
 
-    A list of strings giving characters that will not have tanslations generated. This is useful
+    A list of strings giving characters that will not have translations generated. This is useful
     for characters that are used for debugging or note purposes. This compares against string value
     of the expression in the statement. (So "e" will match ``e`` but not ``l``, even if e and l are
     the same object.)
