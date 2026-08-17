@@ -22,6 +22,17 @@ fix 版本会从该分支构建。
 包含新特性、需要不兼容变更或对 Ren'Py 内部进行重大修改的拉取请求应该指向 master 分支。\
 新特性版本用这个分支构建。
 
+`work/`
+
+> work/ 分支包含打算合并到 master 分支或 fix 分支的拉取请求或等待合并的请求。\
+该分支应以 work/<username>/ 开头，多个贡献者共同维护的工作中使用 work/shared/。
+
+github规则要求新分支必须以 work/ 开头。
+
+`history/`
+
+以 history/ 开头的分支包含因各种原因未被github接口包含的提交。
+
 ## 入门
 
 Ren'Py 依赖许多用 Cython 和 C 编写的 Python 模块。对于仅涉及 Python 模块的 Ren'Py 更改，你可以使用每夜构建中的模块。否则，你得自行编译这些模块。
