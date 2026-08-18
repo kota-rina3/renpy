@@ -514,5 +514,16 @@ init 1100 python hide:
     config.max_texture_size = (max(config.max_texture_size[0], config.fbo_size[0]),
                                max(config.max_texture_size[1], config.fbo_size[1]))
 
+    # Compat: legacy projects (no script_version, or <= 7.4.4) often replace
+    # config.keymap entirely (`config.keymap = {...}` instead of updating it),
+    # which drops the pad-bound keys such as button_select. init_keymap() would
+    # then fill them with empty lists, breaking mouse activation of buttons and
+    # other controls. Restore the defaults here, before init_keymap() runs.
+    if (config.script_version is None) or compat(7, 4, 4):
+        for binding_list in config.pad_bindings.values():
+            for binding in binding_list:
+                if binding not in config.keymap:
+                    config.keymap[binding] = list(config.default_keymap.get(binding, ()))
+
 # game compat
 default persistent.lernardo = 0 # The Expression Amrilato
