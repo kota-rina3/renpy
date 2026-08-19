@@ -41,7 +41,7 @@ def main():
     generate_styles.generate()
 
     # These control the level of optimization versus debugging.
-    setuplib.extra_compile_args = ["-Wno-unused-function", "-O2", "-mtune=generic", "-flto", "-g0"]
+    setuplib.extra_compile_args = ["-Wno-unused-function", "-O2", "-mtune=generic", "-flto"]
     setuplib.extra_link_args = ["-s", "-flto"]
 
     cubism = os.environ.get("CUBISM", None)
