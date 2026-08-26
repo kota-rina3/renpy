@@ -140,6 +140,19 @@ init -1500 python:
         if _last_voice_play is not None:
             renpy.sound.play(_last_voice_play, channel="voice")
 
+    def voice_repeat():
+        """
+        :doc: voice
+
+        Repeats the current voice, if possible.
+
+        小馋猫，真会享受
+        """
+
+        if _last_voice_play is not None:
+            renpy.sound.play(_last_voice_play, channel="voice", loop=True)
+
+
     # Returns true if we can replay the voice.
     def voice_can_replay():
         """
@@ -233,7 +246,6 @@ init -1500 python:
             If True, buttons using this action will be marked as selected
             while the sample is playing.
         """
-
         equality_fields = [ "voice_tag", "sample", "can_be_selected" ]
 
         can_be_selected = False
@@ -242,14 +254,20 @@ init -1500 python:
         def __init__(self, voice_tag, sample, selected=False):
             self.voice_tag = voice_tag
             self.sample = sample
-
             self.can_be_selected = selected
+            self.playing = False  # 标记是否正在播放
+            self.last_volume = None  # 记录上一次设置的音量
 
         def __call__(self):
+            # 检查是否被静音
             if self.voice_tag in persistent._voice_mute:
                 return
 
+            # 获取当前音量设置
             volume = persistent._character_volume.get(self.voice_tag, 1.0)
+            self.last_volume = volume
+            
+            # 设置音量
             renpy.music.get_channel("voice").set_volume(volume)
 
             _invoke_voice_callbacks("stop")
@@ -257,16 +275,31 @@ init -1500 python:
 
             renpy.sound.play(self.sample, channel="voice")
             renpy.restart_interaction()
+            self.playing = True  # 标记开始播放
             self.periodic(0)
 
         def get_selected(self):
-
             if not self.can_be_selected:
                 return False
-
             return renpy.sound.get_playing(channel="voice") == self.sample
 
         def periodic(self, st):
+            # 如果正在播放但被静音，立即停止
+            if self.playing and self.voice_tag in persistent._voice_mute:
+                renpy.sound.stop(channel="voice")
+                self.playing = False
+                renpy.restart_interaction()
+                return None
+                
+            # 如果正在播放，检查音量是否变化
+            if self.playing:
+                current_volume = GetCharacterVolume(self.voice_tag)
+                
+                # 如果音量变化，更新音量设置
+                if current_volume != self.last_volume:
+                    renpy.music.get_channel("voice").set_volume(current_volume)
+                    self.last_volume = current_volume
+                    renpy.restart_interaction()
 
             if not self.can_be_selected:
                 return None
@@ -324,6 +357,18 @@ init -1500 python:
 
         def get_sensitive(self):
             return voice_can_replay()
+
+    @renpy.pure
+    class VoiceRepeat(Action, DictEquality):
+        '''
+        馋猫模式，让玩家重复播放某条语音（真会享受）
+        '''
+        def __call__(self):
+            voice_repeat()
+
+        def get_sensitive(self):
+            return voice_can_replay()
+        
 
 
     class VoiceInfo(_object):

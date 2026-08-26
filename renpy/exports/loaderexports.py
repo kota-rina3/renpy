@@ -206,3 +206,38 @@ def munge(name, filename=None):
         filename = sys._getframe(1).f_code.co_filename
 
     return renpy.lexer.munge_filename(filename) + name[2:]
+
+
+@renpy_pure
+def load_toml(filename, directory=None):
+    """
+    :doc: file
+
+    Loads a TOML (Tom's Obvious, Minimal Language) file and returns the
+    data it contains as a Python dictionary. The file is located using
+    Ren'Py's standard search method, and may reside in the game directory
+    or inside an RPA archive.
+
+    TOML is a human-friendly configuration file format that is easy to
+    read, write, and version-control. It supports strings, integers,
+    floats, booleans, arrays, and tables (nested dictionaries).
+
+    This requires Python 3.11 or newer, which includes the tomllib module
+    in the standard library.
+
+    `filename`
+        The name of the TOML file to load. This is relative to the
+        game directory. It's recommended that the filename end in ".toml".
+
+    `directory`
+        If not None, a directory to search in if the file is not found
+        in the game directory. This will be prepended to filename, and
+        the search tried again.
+
+    Returns the data contained in the TOML file as a Python dictionary.
+    """
+
+    import tomllib
+
+    with renpy.open_file(filename, "utf-8", directory=directory) as f:
+        return tomllib.load(f)

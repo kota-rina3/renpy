@@ -19,6 +19,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+init python:
+    import platform
+    pc_os=platform.system() + " " + platform.release()
+    arch=platform.machine()
+
 screen about:
 
     $ version = renpy.version()
@@ -37,6 +42,8 @@ screen about:
             null height 15
 
             text _("[version!q]") xalign 0.5 bold True
+            text _("OS: [pc_os]") xalign 0.5 bold False
+            text _("CPU Architecture: [arch]") xalign 0.5 bold False
 
             null height 20
 

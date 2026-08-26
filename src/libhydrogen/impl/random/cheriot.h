@@ -1,20 +1,4 @@
-#include <hw_rng.h>
-#include <rtthread.h>
-
-#define DBG_TAG "libhydrogen"
-#define DBG_LVL DBG_LOG
-#include <rtdbg.h>
-
-static int
-hydrogen_init(void)
-{
-    if (hydro_init() != 0) {
-        abort();
-    }
-    LOG_I("libhydrogen initialized");
-    return 0;
-}
-INIT_APP_EXPORT(hydrogen_init);
+uint32_t rand_32();
 
 static int
 hydro_random_init(void)
@@ -26,7 +10,7 @@ hydro_random_init(void)
     hydro_hash_init(&st, ctx, NULL);
 
     while (ebits < 256) {
-        uint32_t r = rt_hwcrypto_rng_update();
+        uint32_t r = rand_32();
         hydro_hash_update(&st, (const uint32_t *) &r, sizeof r);
         ebits += 32;
     }
