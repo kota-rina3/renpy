@@ -1,0 +1,80 @@
+name: Ren'Py-py3_12-macos-arm64
+
+on:
+  workflow_dispatch:
+    branch: master
+
+jobs:
+  build:
+    name: 编译构建
+    runs-on: macos-14
+
+    steps:
+    - name: 检查代码
+      uses: actions/checkout@v4
+
+    - name: 安装 Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: 安装所需依赖
+      run: |
+        brew install \
+          sdl3 \
+          sdl3_image \
+          sdl3_ttf \
+          ffmpeg \
+          freetype \
+          harfbuzz \
+          fribidi \
+          assimp \
+          jpeg-turbo \
+          libpng \
+          openssl@3 \
+          pkg-config
+
+    - name: 设置 pkg-config 路径
+      run: |
+        echo "PKG_CONFIG_PATH=/opt/homebrew/opt/openssl@3/lib/pkgconfig:${PKG_CONFIG_PATH}" >> "$GITHUB_ENV"
+
+    - name: 适配 macOS 编译参数
+      run: |
+        # 强制单架构 arm64（Python sysconfig 默认输出 universal2 -arch arm64 -arch x86_64，
+        # 但 Homebrew 库只有 arm64 slice，双架构会导致 linker 报错）
+        echo "ARCHFLAGS=-arch arm64" >> "$GITHUB_ENV"
+
+        # Homebrew 的 include/lib 路径确保 pkg-config 能解析到
+        echo 'CFLAGS=-I/opt/homebrew/include' >> "$GITHUB_ENV"
+        echo 'LDFLAGS=-L/opt/homebrew/lib' >> "$GITHUB_ENV"
+
+        # Apple Clang 不支持 -mtune=generic；macOS ld 不支持 -s
+        sed -i '' 's/"-mtune=generic", //' setup.py
+        sed -i '' 's/"-s", //' setup.py
+
+        # assimp 6.x 头文件用了 inline constexpr（C++17），setuplib.py 只给 C 加 -std=gnu99，
+        # 没给 C++ 加标准，导致 Apple Clang 默认 C++98 模式下报 unknown type name 'constexpr'
+        # （YAML block scalar | 会吃掉每行前8个空格，这里 sed a\ 的缩进需要多加8格补偿）
+        sed -i '' '/compile_args.append("-std=gnu99")/a\
+                elif data["language"] == "c++":\
+                    compile_args.append("-std=c++17")' scripts/setuplib.py
+
+    - name: 安装 Python 模块
+      run: |
+        pip3 install setuptools cython future six typing pefile requests uv assimp legacy-cgi
+        uv sync
+
+    - name: 编译 renpy 运行所需模块
+      run: |
+        echo "ARCHFLAGS=${ARCHFLAGS}"
+        ./run.sh --build
+        # macOS 原生 strip（GNU --strip-unneeded 在 macOS 上无效，补一刀）
+        find . -name '*.so' -exec strip -x {} \; 2>/dev/null || true
+        mkdir ./ayasaki
+        cp -R renpy renpy.py *.so ./ayasaki/
+
+    - name: 上传构建产物
+      uses: actions/upload-artifact@v4
+      with:
+        name: renpy-py3_12-macos-arm64
+        path: ./ayasaki/
