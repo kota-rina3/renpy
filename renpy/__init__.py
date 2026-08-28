@@ -416,6 +416,7 @@ def import_all():
     import renpy.curry
     import renpy.color
     import renpy.easy
+    import renpy.ecsign
     import renpy.encryption
     import renpy.execution
     import renpy.lexer
@@ -723,6 +724,7 @@ if typing.TYPE_CHECKING:
     from . import display as display
     from . import dump as dump
     from . import easy as easy
+    from . import ecsign as ecsign
     from . import editor as editor
     from . import encryption as encryption
     from . import error as error
