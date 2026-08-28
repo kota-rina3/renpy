@@ -44,12 +44,10 @@ jobs:
       continue-on-error: true
       run: |
         ./run.sh
-        mkdir ./ayasaki
-        cp -R renpy renpy.py *.so ./ayasaki/
 
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: renpy-py3_12-glibc2_38-x86_64
-        path: ./ayasaki/
+        path: ./
