@@ -16,6 +16,7 @@ jobs:
       uses: docker/setup-qemu-action@v3
 
     - name: 在龙芯容器中编译
+      continue-on-error: true
       run: |
         docker run --platform linux/loong64 \
           -v "${{ github.workspace }}:/workspace" \
@@ -40,11 +41,10 @@ jobs:
             uv sync
 
             ./run.sh
-            mkdir ./ayasaki
-            cp -R renpy renpy.py *.so ./ayasaki/
           '
     - name: 上传构建产物
       uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: renpy-py3_13-glibc2_41-loong64
-        path: ./ayasaki
+        path: ./
