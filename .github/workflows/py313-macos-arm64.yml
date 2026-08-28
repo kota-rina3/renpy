@@ -31,7 +31,6 @@ jobs:
           assimp \
           jpeg-turbo \
           libpng \
-          openssl@3 \
           pkg-config
 
     - name: 设置 pkg-config 路径

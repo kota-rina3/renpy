@@ -33,7 +33,6 @@ jobs:
           libharfbuzz-dev \
           libfreetype6-dev \
           libfribidi-dev \
-          libssl-dev \
           libsdl3-dev \
           libsdl3-image-dev \
           libsdl3-ttf-dev \
@@ -48,7 +47,7 @@ jobs:
 
     - name: 编译renpy运行所需模块
       run: |
-        ./run.sh --build
+        ./run.sh
         mkdir ./ayasaki
         cp -R renpy renpy.py *.so ./ayasaki/
 
