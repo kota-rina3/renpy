@@ -39,6 +39,14 @@ locked = False
 # The title of the game window.
 window_title = None
 
+# No window title bar.
+borderless_window = False
+
+# If True, a long left-click (hold for 0.3 seconds then drag) in
+# a borderless window will move the window.  Only has an effect when
+# borderless_window is also True.
+borderless_window_drag = True
+
 # An image file containing the window icon image.
 window_icon = None
 
@@ -64,7 +72,7 @@ debug_sound = os.environ.get("RENPY_DEBUG_SOUND", False)
 rollback_enabled = True
 
 # If the rollback is longer than this, we may trim it.
-rollback_length = 128
+rollback_length = 192
 
 # If set to True, clicking while in rollback will keep the roll forward
 # buffer if the data has not changed.
@@ -273,7 +281,7 @@ editor_transient = None  # os.environ.get('RENPY_EDITOR_TRANSIENT', editor)
 editor_file_separator = None  # os.environ.get('RENPY_EDITOR_FILE_SEPARATOR', '" "')
 
 # Enable developer mode?
-developer = False  # Changed to True or False in the init code.
+developer = True  # Changed to True or False in the init code.
 
 # The value of developer requested by the creator (True, False, or "auto")
 original_developer = False
@@ -495,6 +503,9 @@ log_enable = True
 
 # Should we log text overflows?
 debug_text_overflow = False
+
+# Should we display layout boundaries (colored borders around each displayable)?
+debug_layout = False
 
 # Should underfull grids raise an exception?
 allow_underfull_grids = True
@@ -794,6 +805,9 @@ translate_comments = []
 
 # Should we try detect user locale on first launch?
 enable_language_autodetect = False
+
+# If False, the game will exit with a message when launched a second time.
+allow_second_launch = True
 
 # A function from (locale, region) -> existing language.
 locale_to_language_function = None
@@ -1750,6 +1764,9 @@ def init():
     error_suggestion_handlers[renpy.display.image.ImageNotFound] = renpy.display.image.ImageNotFound.get_suggestion
 
     locale_to_language_map.update(renpy.translation.locales)
+
+    if not hasattr(renpy.config, 'special_directory_map'):
+        renpy.config.special_directory_map = {'images': ['images'], 'audio': ['audio'], 'fonts': ['fonts']}
 
 
 def post_init():

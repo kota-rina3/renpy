@@ -468,6 +468,7 @@ from renpy.exports.loaderexports import (
     fsdecode as fsdecode,
     fsencode as fsencode,
     list_files as list_files,
+    load_toml as load_toml,
     loadable as loadable,
     munge as munge,
     notl_file as notl_file,

@@ -19,14 +19,10 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import collections
-import pathlib
-import site
-import socket
-import subprocess
-import sys
 from typing import TypedDict
 
+import site
+import pathlib
 
 class Version:
     def __init__(self, branch: str, semver: tuple[int, int, int], name: str):
@@ -51,9 +47,9 @@ class Version:
 branch_to_version: dict[str, Version] = {}
 
 
-Version("main", (8, 6, 0), "Real Artists Ship")
+Version("main", (8, 6, 0, 0), "Real Artists Ship")
 
-Version("fix", (8, 5, 4), "We Can Go to the Moon")
+Version("fix", (8, 5, 4, 6), "We Can Go to the Moon")
 
 
 class VersionDict(TypedDict):
@@ -98,7 +94,7 @@ def _make_version_string(
     if not official and branch not in {"main", "master"}:
         suffixes.append(branch)
 
-    return f"{major}.{minor}.{patch}.{commit:08d}+{'.'.join(suffixes)}"
+    return f"{major}.{minor}.{patch}.{commit:01d}"
 
 
 def get_vc_version() -> VersionDict | None:
@@ -140,66 +136,6 @@ def get_vc_version() -> VersionDict | None:
     )
 
 
-def get_git_version(nightly: bool = False) -> VersionDict:
-    """
-    Return `Version` read from the git repository if it exists or None otherwise.
-    """
-
-    def get_output(args: list[str]) -> str:
-        creationflags = 0
-        if sys.platform == "win32":
-            creationflags = subprocess.CREATE_NO_WINDOW
-
-        return subprocess.check_output(args, encoding="utf-8", creationflags=creationflags).strip()
-
-    try:
-        git_root = get_output(["git", "rev-parse", "--show-toplevel"])
-
-        root = pathlib.Path(__file__).parent.parent
-        if not root.samefile(git_root):
-            raise Exception("Current git repository is not Ren'Py repository.")
-
-        branch = get_output(["git", "branch", "--show-current"])
-        dirty = get_output(["git", "status", "--porcelain"]) != ""
-        commits = get_output(["git", "log", "-99", "--pretty=%cd", "--date=format:%y%m%d"])
-
-        commits_per_day = collections.Counter[str](commits.split())
-        key = max(commits_per_day.keys())
-        commit = int(f"{key}{commits_per_day[key]:02d}")
-
-    except Exception:
-        import traceback
-
-        traceback.print_exc()
-        branch = "unknown"
-        dirty = False
-        commit = 0
-
-    if branch in branch_to_version:
-        version_obj = branch_to_version[branch]
-    else:
-        version_obj = branch_to_version["main"]
-
-    semver = (*version_obj.semver, commit)
-    official = socket.gethostname() == "eileen"
-
-    return VersionDict(
-        semver=semver,
-        version=_make_version_string(
-            semver,
-            branch,
-            official,
-            nightly,
-            dirty,
-        ),
-        name=version_obj.name,
-        branch=branch,
-        official=official,
-        nightly=nightly,
-        dirty=dirty,
-    )
-
-
 def get_version() -> VersionDict:
     """
     Return a version dict either from local vc_version or from git.
@@ -208,8 +144,17 @@ def get_version() -> VersionDict:
     if (vc_version := get_vc_version()) is not None:
         return vc_version
 
-    return get_git_version()
-
+    # Fallback: hardcoded default for built SDK without git
+    semver = (8, 5, 4, 5)
+    return VersionDict(
+        semver=semver,
+        version=_make_version_string(semver, "main", False, False, False),
+        name="NOW",
+        branch="main",
+        official=False,
+        nightly=False,
+        dirty=False,
+    )
 
 def get_release_version():
     """
@@ -237,7 +182,7 @@ def generate_vc_version(nightly: bool = False) -> VersionDict:
         If true, the nightly flag is set.
     """
 
-    version_dict = get_git_version(nightly)
+    version_dict = get_version()
 
     vc_version_path = pathlib.Path(__file__).parent / "vc_version.py"
 

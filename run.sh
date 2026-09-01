@@ -7,7 +7,6 @@ set -e
 export RENPY_CYTHON=cython
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
-QUIET=${RENPY_QUIET- --quiet}
 BUILD_ONLY=false
 CLEAN=false
 
@@ -69,7 +68,7 @@ BUILD_J="-j $CPUS"
 setup () {
     pushd $1 >/dev/null
 
-    if ! python setup.py $QUIET build_ext -b tmp/build/lib.$variant -t tmp/build/tmp.$variant --inplace $BUILD_J; then
+    if ! python setup.py build_ext -b tmp/build/lib.$variant -t tmp/build/tmp.$variant --inplace $BUILD_J; then
         if [ "$(which python)" != "$ROOT/.venv/bin/python" ]; then
             echo "Warning: Running using $(which python)"
         fi
