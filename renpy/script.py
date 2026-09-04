@@ -624,7 +624,7 @@ class Script:
                     if b in __future__.all_feature_names:
                         renpy.python.file_compiler_flags[i.filename] |= getattr(__future__, b).compiler_flag
                     else:
-                        raise Exception(f"Unknown __future__ : {b!r}.")
+                        raise Exception(f"Unknown __future__: {b!r}.")
 
         # Take the translations.
         self.translator.take_translates(all_stmts)
@@ -1072,8 +1072,6 @@ class Script:
         cache. Clears out self.all_pycode.
         """
 
-        renpy.python.compile_warnings = []
-
         for i in self.all_pyexpr:
             try:
                 renpy.python.py_compile(i, "eval")
@@ -1085,14 +1083,8 @@ class Script:
         # Update all of the PyCode objects in the system with the loaded
         # bytecode.
 
-        old_ei = renpy.game.exception_info
-
         for i in self.all_pycode:
             try:
-                renpy.game.exception_info = (
-                    f"While compiling python block starting at line {i.linenumber} of {i.filename}."
-                )
-
                 i.bytecode = renpy.python.py_compile(
                     i.source,
                     i.mode,
@@ -1117,9 +1109,6 @@ class Script:
                 )
 
                 renpy.parser.parse_errors.append(pem.message)
-
-            finally:
-                renpy.game.exception_info = old_ei
 
         self.all_pycode = []
 
