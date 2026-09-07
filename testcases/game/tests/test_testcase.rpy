@@ -21,6 +21,18 @@ screen teleporting_button(x=0, y=0, remaining=20):
         else:
             action Hide("teleporting_button")
 
+screen button_release_origin:
+    vbox:
+        xpos 100
+        ypos 100
+
+        textbutton "First":
+            id "button_release_first"
+            action SetVariable("button_release_result", "first")
+
+        textbutton "Second":
+            id "button_release_second"
+            action SetVariable("button_release_result", "second")
 screen test_expressions__input__screen():
     default input_value = ""
 
@@ -197,6 +209,29 @@ testsuite selectors:
         assert screen "teleporting_button"
         click id "teleporting_button" until not screen "teleporting_button"
 
+    testcase button_release_origin:
+        $ button_release_result = None
+        run Show("button_release_origin")
+        pause until screen "button_release_origin"
+
+        drag id "button_release_first" to id "button_release_second"
+        assert eval button_release_result is None
+
+        drag pos (0, 0) to id "button_release_second"
+        assert eval button_release_result is None
+
+        click id "button_release_second"
+        assert eval button_release_result == "second"
+
+        $ button_release_result = None
+        drag id "button_release_first" to pos (0, 0)
+        assert eval button_release_result is None
+
+        drag pos (0, 0) to id "button_release_first"
+        assert eval button_release_result is None
+
+        run Hide("button_release_origin")
+        
     testcase bounds_test:
         # Peg bounds: (100, 100) to (200, 200), size: (100, 100)
         # Hole bounds: (450, 140) to (600, 290), size: (150, 150)
