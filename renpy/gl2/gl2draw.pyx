@@ -410,7 +410,7 @@ cdef class GL2Draw:
 
             if physical_size is not None:
                 pwidth, pheight = physical_size
-                if pos[0] + pwidth > rect[2] and pos[1] + pheight > rect[3]:
+                if pos[0] + pwidth > rect[0] + rect[2] or pos[1] + pheight > rect[1] + rect[3]:
                     continue
 
             return pos
