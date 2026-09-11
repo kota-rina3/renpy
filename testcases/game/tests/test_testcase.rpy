@@ -1,5 +1,9 @@
 ## This file tests the testcase system itself
 
+# ==============
+# == Fixtures ==
+# ==============
+
 label three_messages:
     "Message 1"
     "Message 2"
@@ -21,24 +25,35 @@ screen teleporting_button(x=0, y=0, remaining=20):
         else:
             action Hide("teleporting_button")
 
-screen button_release_origin:
+screen button_release_origin__screen():
+    default clicked = None
     vbox:
         xpos 100
         ypos 100
 
         textbutton "First":
             id "button_release_first"
-            action SetVariable("button_release_result", "first")
+            action SetScreenVariable("clicked", "first")
 
         textbutton "Second":
             id "button_release_second"
-            action SetVariable("button_release_result", "second")
+            action SetScreenVariable("clicked", "second")
+
+        textbutton "Reset":
+            id "button_release_reset"
+            action SetScreenVariable("clicked", None)
+
 screen test_expressions__input__screen():
     default input_value = ""
 
     input:
         id "test_expressions__input"
         value ScreenVariableInputValue("input_value")
+
+
+# ==============
+# === Tests ====
+# ==============
 
 testsuite flow:
     testcase skip:
@@ -210,28 +225,38 @@ testsuite selectors:
         click id "teleporting_button" until not screen "teleporting_button"
 
     testcase button_release_origin:
-        $ button_release_result = None
-        run Show("button_release_origin")
-        pause until screen "button_release_origin"
+        run Show("button_release_origin__screen")
+        pause until screen "button_release_origin__screen"
 
+        # These clicks should set the screen variable "clicked" to the button id,
+        # and then reset it to None.
+        for button_id in ["first", "second"]:
+            click id f"button_release_{button_id}"
+
+            python:
+                result = renpy.exports.get_screen_variable("clicked", "button_release_origin__screen")
+                assert result == button_id, f"Click, expected '{button_id}', got {result!r}"
+
+            click id "button_release_reset"
+
+        # The rest of these drags should not set the screen variable "clicked" to anything.
         drag id "button_release_first" to id "button_release_second"
-        assert eval button_release_result is None
+        python:
+            result = renpy.exports.get_screen_variable("clicked", "button_release_origin__screen")
+            assert result is None, f"Drag from other button, expected None, got {result!r}"
 
         drag pos (0, 0) to id "button_release_second"
-        assert eval button_release_result is None
+        python:
+            result = renpy.exports.get_screen_variable("clicked", "button_release_origin__screen")
+            assert result is None, f"Drag from empty space, expected None, got {result!r}"
 
-        click id "button_release_second"
-        assert eval button_release_result == "second"
-
-        $ button_release_result = None
         drag id "button_release_first" to pos (0, 0)
-        assert eval button_release_result is None
+        python:
+            result = renpy.exports.get_screen_variable("clicked", "button_release_origin__screen")
+            assert result is None, f"Drag to empty space, expected None, got {result!r}"
 
-        drag pos (0, 0) to id "button_release_first"
-        assert eval button_release_result is None
+        run Hide("button_release_origin__screen")
 
-        run Hide("button_release_origin")
-        
     testcase bounds_test:
         # Peg bounds: (100, 100) to (200, 200), size: (100, 100)
         # Hole bounds: (450, 140) to (600, 290), size: (150, 150)
@@ -326,6 +351,11 @@ testsuite selectors:
         scroll id "scroll_vp" amount 50
         click id "close_screen_button"
         assert not screen "scroll_screen"
+
+    testcase screen_and_id_selectors:
+        assert screen "main_menu"
+        assert id "quit_button"
+        assert screen "main_menu" id "quit_button"
 
 testsuite timeout:
     setup:
