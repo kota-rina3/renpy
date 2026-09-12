@@ -28,6 +28,8 @@ from renpy.display.render cimport Render
 
 from renpy.uguu.gl cimport *
 
+cdef void clear_color_buffer(int x, int y, int width, int height) noexcept nogil
+
 cdef class GL2Draw:
 
 

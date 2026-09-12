@@ -130,6 +130,13 @@ cdef set get_gl_extensions_list():
     return extensions
 
 
+cdef void clear_color_buffer(int x, int y, int width, int height) noexcept nogil:
+    glEnable(GL_SCISSOR_TEST)
+    glScissor(x, y, width, height)
+    glClear(GL_COLOR_BUFFER_BIT)
+    glDisable(GL_SCISSOR_TEST)
+
+
 cdef class GL2Draw:
 
     def __init__(self, name):
@@ -1235,7 +1242,10 @@ cdef class GL2Draw:
         # Clear the screen.
         clear_r, clear_g, clear_b = renpy.color.Color(renpy.config.gl_clear_color).rgb
         glClearColor(clear_r, clear_g, clear_b, 0.0 if screenshot else 1.0)
-        glClear(GL_COLOR_BUFFER_BIT)
+        if screenshot:
+            clear_color_buffer(0, 0, <int> w, <int> h)
+        else:
+            glClear(GL_COLOR_BUFFER_BIT)
 
         # Project the child from virtual space to the screen space.
         cdef Matrix transform
