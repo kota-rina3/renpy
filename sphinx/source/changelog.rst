@@ -138,6 +138,12 @@ to adjust fonts to the same relative size.
 
 Text shaders now support the ``u_text_time`` uniform, which is the time in seconds since the start of the text effect.
 
+The ``jitter`` text shader now supports ``u__duration`` to stop shaking after a
+specified number of seconds, and ``u__individual=1`` to move each glyph
+independently. The duration starts when the text is first shown. A duration of
+0 (the default) or a negative value makes jitter continue indefinitely.
+By default, all glyphs still move together.
+
 Text interpolation now supports the ``!f`` flag, which passes interpolated text through :var:`config.say_menu_text_filter`.
 
 Menu text filtering can now be disabled with :var:`config.use_menu_text_filter`, which defaults to True.
@@ -199,6 +205,11 @@ Text can now be selected with ``text <expr>`` (e.g. ``assert text "Hello"``, ``a
 
 Fixed a counting bug with the ``repeat <num>`` statement.
 
+Desktop testcase runs now use a fixed window with physical and drawable
+resolution matching the game's virtual resolution, making screenshot sizes
+and crop coordinates independent of saved window preferences and DPI scaling.
+
+
 
 Other Changes
 -------------
@@ -232,6 +243,9 @@ Ren'Py's PC presplash system has been updated to support WEBP and AVIF images, i
 
 Fixes
 -----
+
+Opus audio now decodes pre-roll before loop points and seeks, preserving
+accurate start positions and avoiding incorrect audio immediately after a jump.
 
 :func:`SnowBlossom` with ``fast=True`` now starts with particles throughout
 the screen even when first rendered at a nonzero animation time, such as
