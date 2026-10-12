@@ -40,7 +40,8 @@ import math
 # We grab the blit lock each time it is necessary to blit
 # something. This allows call to the pygame.transform functions to
 # disable blitting, should it prove necessary.
-blit_lock = threading.Condition()
+# Use a simple Lock for mutual exclusion when drawing to surfaces.
+blit_lock = threading.Lock()
 
 # This is a dictionary containing all the renders that we know of. It's a
 # map from displayable to dictionaries containing the render of that
@@ -71,6 +72,9 @@ sizing = False
 # false otherwise.
 models = False
 
+# Whether the screen render has been invalidated (used by render loop).
+invalidated = False
+
 def adjust_render_cache_times(old_time, new_time):
     """
     This adjusts the render cache such that if a render starts at
@@ -90,7 +94,7 @@ def adjust_render_cache_times(old_time, new_time):
         new_renders = { }
 
         for k, v in (<dict> renders).iteritems():
-            w, h, st_base, at_base = k
+            w, h, st_base, at_base, debug_layout = k
 
             if st_base == old_time:
                 st_base = new_time
@@ -98,7 +102,7 @@ def adjust_render_cache_times(old_time, new_time):
             if at_base == old_time:
                 at_base = new_time
 
-            new_renders[(w, h, st_base, at_base)] = v
+            new_renders[(w, h, st_base, at_base, debug_layout)] = v
 
         render_cache[id_d] = new_renders
 
@@ -167,6 +171,118 @@ def render_ready():
 render_width = 0
 render_height = 0
 
+# Debug layout boundary colors for different displayable types.
+_debug_border_colors = {
+    "MultiBox": "#3388ff",     # blue      — Fixed/HBox/VBox
+    "Window": "#33cc33",       # green
+    "Frame": "#ff8800",        # orange
+    "Button": "#ffcc00",       # yellow
+    "Bar": "#cc44ff",          # purple
+    "Viewport": "#00bbcc",     # teal
+    "Grid": "#33ccff",         # light blue
+    "Transform": "#ff8888",    # light red
+    "Text": "#cccccc",         # light gray
+    "Null": "#666666",         # dark gray
+    "Label": "#ff99cc",        # pink
+    "Input": "#ff6666",        # coral
+    "ScreenDisplayable": "#ff44ff",  # magenta
+    "Side": "#66ff66",         # lime
+    "Alpha": "#888888",        # medium gray
+}
+
+# Cache of pre-built border Renders, keyed by (width, height, color).
+# Avoids recreating surfaces every time a displayable re-renders.
+_debug_border_cache = {}
+_debug_border_cache_max = 4096
+
+def _debug_border_color(d):
+    """
+    Returns a color (as a hex string) for the debug layout border
+    based on the displayable's class name.
+    """
+    name = d.__class__.__name__
+    return _debug_border_colors.get(name, "#ff3333")  # default: red
+
+def _get_cached_border(w, h, color):
+    """
+    Returns a Render containing a 1-pixel coloured border rectangle
+    of the given size.  Results are cached so that displayables with
+    identical dimensions and colours share the same border Render.
+
+    Uses four opaque (non-SRCALPHA) pygame surfaces — one per edge —
+    each filled with a solid colour.  This avoids the alpha-compositing
+    artifacts (red-white gradients) that occur when a single transparent
+    canvas surface is drawn on and the GPU interpolates between coloured
+    border texels and fully-transparent interior texels.
+    """
+    key = (w, h, color)
+    rv = _debug_border_cache.get(key)
+
+    if rv is not None:
+        return rv
+
+    # Evict the whole cache if it grows too large (debug-only feature).
+    if len(_debug_border_cache) >= _debug_border_cache_max:
+        _debug_border_cache.clear()
+
+    rv = Render(w, h)
+    c = renpy.color.Color(color)
+
+    try:
+        # Top edge — opaque  w×1  strip.
+        top = renpy.pygame.Surface((w, 1))
+        top.fill(c)
+        rv.blit(top, (0, 0), main=False, focus=False)
+
+        # Bottom edge.
+        if h > 1:
+            bottom = renpy.pygame.Surface((w, 1))
+            bottom.fill(c)
+            rv.blit(bottom, (0, h - 1), main=False, focus=False)
+
+        # Left edge — opaque  1×h  strip.
+        if h > 0:
+            left = renpy.pygame.Surface((1, h))
+            left.fill(c)
+            rv.blit(left, (0, 0), main=False, focus=False)
+
+        # Right edge.
+        if w > 1 and h > 0:
+            right = renpy.pygame.Surface((1, h))
+            right.fill(c)
+            rv.blit(right, (w - 1, 0), main=False, focus=False)
+
+        # Force GL_NEAREST filtering so 1px edges stay crisp (no GPU
+        # interpolation between adjacent texels).
+        rv.add_property("texture_scaling", "nearest")
+
+    except Exception:
+        pass
+
+    _debug_border_cache[key] = rv
+    return rv
+
+def _draw_debug_border(rv, d):
+    """
+    Draws a 1-pixel colored border rectangle on the Render `rv` to
+    show the layout boundary of displayable `d`.
+
+    The border geometry is pre-built and cached in _debug_border_cache
+    so that repeated renders of the same size/colour are zero-cost.
+    """
+    try:
+        w = int(rv.width)
+        h = int(rv.height)
+        if w <= 0 or h <= 0:
+            return
+
+        border = _get_cached_border(w, h, _debug_border_color(d))
+        rv.blit(border, (0, 0), main=False, focus=False)
+
+    except Exception:
+        # Never let debug drawing crash the game.
+        pass
+
 cpdef render(d, object widtho, object heighto, double st, double at):
     """
     :doc: udd_utility
@@ -204,7 +320,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
         if renpy.config.developer:
             raise Exception("Displayables may not be rendered during the init phase.")
 
-    orig_wh = (widtho, heighto, frame_time-st, frame_time-at)
+    orig_wh = (widtho, heighto, frame_time-st, frame_time-at, renpy.config.debug_layout)
 
     render_width = widtho
     render_height = heighto
@@ -247,7 +363,7 @@ cpdef render(d, object widtho, object heighto, double st, double at):
     if orig_width != width or orig_height != height:
         widtho = width
         heighto = height
-        wh = (widtho, heighto, frame_time-st, frame_time-at)
+        wh = (widtho, heighto, frame_time-st, frame_time-at, renpy.config.debug_layout)
         rv = render_cache_d.get(wh, None)
 
         if rv is not None:
@@ -284,6 +400,10 @@ cpdef render(d, object widtho, object heighto, double st, double at):
 
     rv.debug = style.debug or rv.debug
 
+    # Draw debug layout boundaries if enabled.
+    if renpy.config.debug_layout:
+        _draw_debug_border(rv, d)
+
     if not sizing:
 
         # This lookup is needed because invalidations are possible.
@@ -306,7 +426,7 @@ def render_for_size(d, width, height, st, at):
     global sizing
 
     id_d = id(d)
-    orig_wh = (width, height, frame_time-st, frame_time-at)
+    orig_wh = (width, height, frame_time-st, frame_time-at, renpy.config.debug_layout)
     render_cache_d = render_cache[id_d]
     rv = render_cache_d.get(orig_wh, None)
 
@@ -1720,105 +1840,78 @@ class Canvas(object):
 
     def rect(self, color, rect, width=0):
 
-        try:
-            blit_lock.acquire()
+        with blit_lock:
             pygame.draw.rect(self.surf,
                              renpy.color.Color(color),
                              rect,
                              width)
-        finally:
-            blit_lock.release()
 
     def polygon(self, color, pointlist, width=0):
-        try:
-            blit_lock.acquire()
+        with blit_lock:
             pygame.draw.polygon(self.surf,
                                 renpy.color.Color(color),
                                 pointlist,
                                 width)
-        finally:
-            blit_lock.release()
 
     def circle(self, color, pos, radius, width=0):
 
-        try:
-            blit_lock.acquire()
+        with blit_lock:
             pygame.draw.circle(self.surf,
                                renpy.color.Color(color),
                                pos,
                                radius,
                                width)
 
-        finally:
-            blit_lock.release()
 
     def ellipse(self, color, rect, width=0):
-        try:
-            blit_lock.acquire()
+        with blit_lock:
             pygame.draw.ellipse(self.surf,
                                 renpy.color.Color(color),
                                 rect,
                                 width)
-        finally:
-            blit_lock.release()
 
 
     def arc(self, color, rect, start_angle, stop_angle, width=1):
-        try:
-            blit_lock.acquire()
+        with blit_lock:
             pygame.draw.arc(self.surf,
                             renpy.color.Color(color),
                             rect,
                             start_angle,
                             stop_angle,
                             width)
-        finally:
-            blit_lock.release()
 
 
     def line(self, color, start_pos, end_pos, width=1):
-        try:
-            blit_lock.acquire()
+        with blit_lock:
             pygame.draw.line(self.surf,
                              renpy.color.Color(color),
                              start_pos,
                              end_pos,
                              width)
-        finally:
-            blit_lock.release()
 
     def lines(self, color, closed, pointlist, width=1):
-        try:
-            blit_lock.acquire()
+        with blit_lock:
             pygame.draw.lines(self.surf,
                               renpy.color.Color(color),
                               closed,
                               pointlist,
                               width)
-        finally:
-            blit_lock.release()
 
     def aaline(self, color, startpos, endpos, blend=1):
-        try:
-            blit_lock.acquire()
+        with blit_lock:
             pygame.draw.aaline(self.surf,
                                renpy.color.Color(color),
                                startpos,
                                endpos,
                                blend)
-        finally:
-            blit_lock.release()
 
     def aalines(self, color, closed, pointlist, blend=1):
-        try:
-            blit_lock.acquire()
+        with blit_lock:
             pygame.draw.aalines(self.surf,
                                 renpy.color.Color(color),
                                 closed,
                                 pointlist,
                                 blend)
-        finally:
-            blit_lock.release()
 
     def get_surface(self):
         return self.surf

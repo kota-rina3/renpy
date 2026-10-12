@@ -136,6 +136,9 @@ bytecode_version: int = 1
 windows: bool = False
 macintosh: bool = False
 linux: bool = False
+freebsd: bool = False
+haiku: bool = False
+openharmony: bool = False
 android: bool = False
 ios: bool = False
 emscripten: bool = False
@@ -149,6 +152,12 @@ elif os.environ.get("RENPY_PLATFORM", "").startswith("ios"):
     ios = True
 elif platform.mac_ver()[0]:
     macintosh = True
+elif platform.system() == "FreeBSD":
+    freebsd = True
+elif platform.system() == "Haiku" or sys.platform == "haiku1":
+    haiku = True
+elif platform.system() == "OpenHarmony":
+    openharmony = True
 elif "ANDROID_PRIVATE" in os.environ:
     android = True
 elif sys.platform == "emscripten" or "RENPY_EMSCRIPTEN" in os.environ:
