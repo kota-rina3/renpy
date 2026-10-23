@@ -519,6 +519,10 @@ cdef class GL2Draw:
 
         if renpy.config.borderless_window:
             window_flags |= pygame.NOFRAME
+	    
+        # Ask the window manager to keep the window on top, if requested.
+        if renpy.config.window_always_on_top:
+            window_flags |= pygame.WINDOW_ALWAYS_ON_TOP
 
         if renpy.config.gl2_modify_window_flags is not None:
             window_flags = renpy.config.gl2_modify_window_flags(window_flags)
@@ -579,6 +583,10 @@ cdef class GL2Draw:
                     "Could not create an OpenGL ES 3.0 context, which Ren'Py requires.")
 
             return False
+
+        # Apply the always-on-top state, in case the window manager ignored
+        # the creation flag.
+        pygame.display.set_always_on_top(renpy.config.window_always_on_top)
 
         # Nothing is bound in the new context, and any buffers of a previous
         # one died with it.
@@ -865,7 +873,25 @@ cdef class GL2Draw:
         renpy.display.log.write("Requested resize to %dx%d, fullscreen=%d, maximized=%d", width, height, fullscreen, maximized)
         pygame.display.get_window().resize((width, height), opengl=True, fullscreen=fullscreen, maximized=maximized)
 
+        # Changing the fullscreen state can reset the always-on-top property
+        # on some platforms, so re-apply it.
+        pygame.display.set_always_on_top(renpy.config.window_always_on_top)
+
         renpy.display.interface.fullscreen = fullscreen
+
+    def set_always_on_top(self, on_top):
+        """
+        Sets the window to be always on top, or not. Documented in renderer.
+        """
+
+        pygame.display.set_always_on_top(bool(on_top))
+
+    def get_always_on_top(self):
+        """
+        Returns True if the window is always on top. Documented in renderer.
+        """
+
+        return pygame.display.get_always_on_top()
 
     def update(self, force=False):
         """

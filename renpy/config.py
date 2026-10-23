@@ -50,6 +50,10 @@ borderless_window_drag = True
 # An image file containing the window icon image.
 window_icon = None
 
+# If true, the game window is kept above other windows by the window manager.
+# This is not honored on all platforms.
+window_always_on_top = False
+
 # The same, but only used on MS windows.
 windows_icon = None
 

@@ -901,6 +901,42 @@ def iconify():
     renpy.game.interface.iconify()
 
 
+def set_always_on_top(on_top):
+    """
+    :doc: other
+
+    Sets the game window to be always on top (above other windows) if `on_top`
+    is True, or to stack normally if `on_top` is False.
+
+    This may be called at any time. If it is called before the display is
+    started, the value is remembered and applied when the window is created.
+
+    Always-on-top is not supported on all platforms - for example, some Linux
+    window managers ignore the request.
+    """
+
+    on_top = bool(on_top)
+
+    renpy.config.window_always_on_top = on_top
+
+    if renpy.display.draw is not None:
+        renpy.display.draw.set_always_on_top(on_top)
+
+
+def get_always_on_top():
+    """
+    :doc: other
+
+    Returns True if the game window is currently always on top, and False
+    otherwise.
+    """
+
+    if renpy.display.draw is not None:
+        return renpy.display.draw.get_always_on_top()
+
+    return bool(renpy.config.window_always_on_top)
+
+
 def timeout(seconds):
     """
     :doc: udd_utility
