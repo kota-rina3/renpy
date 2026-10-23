@@ -151,6 +151,10 @@ screen update_channel(channels):
 
                         text c["description"] style "l_small_text"
 
+                    add SPACER
+
+                    textbutton "Upgrade from Github" action OpenURL("https://github.com/renpy/renpy/releases/")
+
     textbutton _("Cancel") action Jump("front_page") style "l_left_button"
 
 

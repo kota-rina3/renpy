@@ -23,9 +23,7 @@ class Editor(renpy.editor.Editor):
             if renpy.windows:
                 return "code.cmd"
 
-            if renpy.macintosh and os.path.exists(
-                "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
-            ):
+            if renpy.macintosh and os.path.exists("/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"):
                 return "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
 
             return "code"
@@ -48,14 +46,10 @@ class Editor(renpy.editor.Editor):
             if renpy.windows:
                 code = os.path.join(RENPY_VSCODE, "VSCode-win32-x64", "bin", "code.cmd")
             elif renpy.macintosh:
-                code = os.path.join(
-                    RENPY_VSCODE, "Visual Studio Code.app", "Contents", "Resources", "app", "bin", "code"
-                )
+                code = os.path.join(RENPY_VSCODE, "Visual Studio Code.app", "Contents", "Resources", "app", "bin", "code")
             elif renpy.linux:
                 if renpy.arch == "aarch64":
                     arch = "arm64"
-                elif renpy.arch == "armv7l":
-                    arch = "arm"
                 else:
                     arch = "x64"
 

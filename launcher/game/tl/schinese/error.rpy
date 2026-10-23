@@ -186,11 +186,11 @@
 
     # renpy/common/_errorhandling.rpym:635
     old "Console"
-    new "控制台"
+    new "终端"
 
     # renpy/common/_errorhandling.rpym:637
     old "Opens a console to allow debugging the problem."
-    new "打开控制台，允许您对问题进行调试。"
+    new "打开终端，允许您排查错误。"
 
     # renpy/common/_errorhandling.rpym:650
     old "Quits the game."

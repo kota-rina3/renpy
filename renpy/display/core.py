@@ -42,7 +42,11 @@ if TYPE_CHECKING:
     from renpy.display.ime import IMECandidates
 
 import_time = time.time()
+
 import_perf_time = time.perf_counter()
+
+# Window drag manager for borderless windows (long-press to drag).
+from renpy.display.window_drag import WindowDragManager
 
 try:
     import android
@@ -635,6 +639,9 @@ class Interface:
         # Should we ignore the rest of the current touch? Used to ignore the
         # rest of a mousepress after a longpress occurs.
         self.ignore_touch = False
+
+        # Window drag manager for borderless windows (long-press to drag).
+        self.window_drag = WindowDragManager(threshold=0.5)
 
         # Should we clear the screenshot at the start of the next interaction?
         self.clear_screenshot = False
@@ -3222,6 +3229,17 @@ class Interface:
                 if ev.type == pygame.WINDOWMOVED:
                     self.on_move()
                     continue
+
+                # Handle long-press window drag for borderless windows.
+                if (
+                    renpy.config.borderless_window
+                    and renpy.config.borderless_window_drag
+                    and not self.fullscreen
+                    and ev.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION)
+                ):
+                    window = pygame.display.get_window()
+                    if self.window_drag.handle_event(ev, window):
+                        continue
 
                 # If we're ignoring touch events, and get a mouse up, stop
                 # ignoring those events.

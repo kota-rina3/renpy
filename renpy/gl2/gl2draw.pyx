@@ -517,6 +517,9 @@ cdef class GL2Draw:
             if renpy.config.gl_resize:
                 window_flags |= pygame.RESIZABLE
 
+        if renpy.config.borderless_window:
+            window_flags |= pygame.NOFRAME
+
         if renpy.config.gl2_modify_window_flags is not None:
             window_flags = renpy.config.gl2_modify_window_flags(window_flags)
 
@@ -540,7 +543,7 @@ cdef class GL2Draw:
             # Select the GL attributes and hints.
             self.select_gl_attributes(gles, version)
 
-            if fullscreen:
+            if (self.window is None) and fullscreen:
                 try:
                     renpy.display.log.write("Fullscreen mode.")
 
