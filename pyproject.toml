@@ -3,13 +3,18 @@ name = "renpy"
 readme = "README.rst"
 license = "MIT"
 version= "8.99.99"
-requires-python = ">=3.12.8,<3.13"
+requires-python = ">=3.12.8"
 dependencies = [
     "future>=1.0.0",
     "six>=1.17.0",
     "pefile>=2024.8.26",
     "requests>=2.34.2",
     "rsa>=4.9.1",
+    "setuptools",
+    "cython",
+    "jinja2",
+    "assimp",
+    "legacy-cgi",
     "chardet>=7.7.0",
     "websockets>=17.3",
     "pysocks>=1.7.1",

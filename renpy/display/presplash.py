@@ -34,11 +34,16 @@ import time
 import renpy
 import renpy.pygame as pygame
 
+from renpy.display.window_drag import WindowDragManager
+
 if renpy.emscripten:
     import emscripten
 
 # The window.
 window = None
+
+# Window drag manager for the borderless presplash.
+_window_drag = WindowDragManager(threshold=0.5)
 
 # The progress bar (if exists).
 progress_bar = None
@@ -170,6 +175,10 @@ def pump_window():
         if ev.type == pygame.QUIT:
             raise renpy.game.QuitException(relaunch=False, status=0)
 
+        # Handle window drag for the borderless presplash.
+        if renpy.config.borderless_window_drag and _window_drag.handle_event(ev, window):
+            continue
+
     if not progress_bar:
         return
 
@@ -196,6 +205,9 @@ def end():
     global done
 
     done = True
+
+    if renpy.emscripten:
+        emscripten.run_script(r"""presplashEnd();""")
 
     if window is None:
         return

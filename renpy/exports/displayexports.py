@@ -368,18 +368,7 @@ def set_tag_attributes(name, layer=None):
         renpy.game.context().images.predict_show(layer, name, False)
 
 
-def show(
-    name,
-    at_list=[],
-    layer=None,
-    what=None,
-    zorder=None,
-    tag=None,
-    behind=[],
-    atl=None,
-    transient=False,
-    munge_name=True,
-):
+def show(name, at_list=[], layer=None, what=None, zorder=None, tag=None, behind=[], atl=None, transient=False, munge_name=True):
     """
     :doc: se_images
     :args: (name, at_list=[], layer=None, what=None, zorder=0, tag=None, behind=[], atl=None, **kwargs)
@@ -516,18 +505,7 @@ def show(
     if renpy.config.missing_hide:
         renpy.config.missing_hide(name, layer)
 
-    sls.add(
-        layer,
-        img,
-        key,
-        zorder,
-        behind,
-        at_list=at_list,
-        name=name,
-        atl=atl,
-        default_transform=default_transform,
-        transient=transient,
-    )
+    sls.add(layer, img, key, zorder, behind, at_list=at_list, name=name, atl=atl, default_transform=default_transform, transient=transient)
 
 
 def hide(name, layer=None):
@@ -849,6 +827,20 @@ def free_memory():
     """
 
     force_full_redraw()
+    
+    # 清除音频缓存
+    if hasattr(renpy.audio.audio, 'cache'):
+        renpy.audio.audio.cache.clear()
+    
+    # 清除Python对象缓存（如果有）
+    if hasattr(renpy.python, 'object_cache'):
+        renpy.python.object_cache.clear()
+    
+    # 清除样式缓存
+    if hasattr(renpy.style, 'style_cache'):
+        renpy.style.style_cache.clear()
+
+
     renpy.display.interface.kill_textures()
     renpy.display.interface.kill_surfaces()
     renpy.text.font.free_memory()
@@ -857,6 +849,17 @@ def free_memory():
 
     if gc.garbage:
         del gc.garbage[:]
+
+    if hasattr(gc, 'free'):
+        gc.free()
+    
+    # 尝试调用系统级内存释放（如果可用）
+    if renpy.linux:
+        try:
+            import ctypes
+            ctypes.CDLL('libc.so.6').malloc_trim(0)
+        except:
+            pass
 
 
 def flush_cache_file(fn):
@@ -902,6 +905,42 @@ def iconify():
     """
 
     renpy.game.interface.iconify()
+
+
+def set_always_on_top(on_top):
+    """
+    :doc: other
+
+    Sets the game window to be always on top (above other windows) if `on_top`
+    is True, or to stack normally if `on_top` is False.
+
+    This may be called at any time. If it is called before the display is
+    started, the value is remembered and applied when the window is created.
+
+    Always-on-top is not supported on all platforms - for example, some Linux
+    window managers ignore the request.
+    """
+
+    on_top = bool(on_top)
+
+    renpy.config.window_always_on_top = on_top
+
+    if renpy.display.draw is not None:
+        renpy.display.draw.set_always_on_top(on_top)
+
+
+def get_always_on_top():
+    """
+    :doc: other
+
+    Returns True if the game window is currently always on top, and False
+    otherwise.
+    """
+
+    if renpy.display.draw is not None:
+        return renpy.display.draw.get_always_on_top()
+
+    return bool(renpy.config.window_always_on_top)
 
 
 def timeout(seconds):
@@ -1149,10 +1188,7 @@ def reset_physical_size():
     and :var:`renpy.config.screen_height`.
     """
 
-    set_physical_size((
-        renpy.config.physical_width or renpy.config.screen_width,
-        renpy.config.physical_height or renpy.config.screen_height,
-    ))
+    set_physical_size((renpy.config.physical_width or renpy.config.screen_width, renpy.config.physical_height or renpy.config.screen_height))
 
 
 def get_image_load_log(age=None):

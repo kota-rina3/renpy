@@ -29,7 +29,7 @@
 # appropriate.
 
 init -1 python hide:
-
+    import platform
     # Update the searchpath to find additional fonts.
     config.searchpath.append(config.renpy_base + "/sdk-fonts")
 
@@ -47,7 +47,7 @@ init -1 python hide:
     # This controls the title of the window, when Ren'Py is
     # running in a window.
 
-    config.window_title = u"Ren'Py Launcher"
+    config.window_title = u"Ren'Py Launcher for "+platform.system()
 
     # These control the name and version of the game, that are reported
     # with tracebacks and other debugging logs.
@@ -156,14 +156,6 @@ init -1 python hide:
 
     # Used when the window is hidden.
     config.window_hide_transition = None
-
-
-    #####################
-    # This is the name of the directory where the game's data is
-    # stored. (It needs to be set early, before any other init code
-    # is run, so the persistent information can be found by the init code.)
-python early:
-    config.save_directory = "launcher-4"
 
 init -1 python hide:
     #####################
@@ -416,7 +408,6 @@ init python:
 
     build.classify_renpy("lib/py3-linux-armv7l", None)
     build.classify_renpy("lib/py3-linux-aarch64/**", "linux_arm")
-    build.classify_renpy("lib/py3-windows-x86_64/dev/**", "windev")
     source_and_binary("lib/py3-**", "binary", "binary", so=True)
 
     libpython = "lib/python{}.{}".format(sys.version_info.major, sys.version_info.minor)
@@ -429,6 +420,7 @@ init python:
     build.classify_renpy("renpy3.sh", "binary")
 
     build.classify_renpy("lib/", "binary")
+    build.allow_integrated_gpu = True
 
     # Packages.
     build.packages = [ ]
@@ -442,8 +434,6 @@ init python:
     build.package("renios", "zip", "renios", dlc=True)
     build.package("web", "zip", "web", dlc=True)
 
-    build.package("windev", "zip", "windev")
-
 # The identifier for the SDK.
 define build.mac_info_plist["CFBundleIdentifier"] = "org.renpy.sdk"
 
@@ -454,7 +444,7 @@ define config.translate_launcher = True
 define config.mouse_focus_clickthrough = True
 
 # Reduce the rate of screen updates.
-default preferences.gl_powersave = True
+default preferences.gl_powersave = False
 
 # Enable rtl.
 define config.rtl = True
