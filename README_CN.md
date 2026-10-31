@@ -61,7 +61,7 @@ Ren'Py 依赖许多用 Cython 和 C 编写的 Python 模块。对于仅涉及 Py
 
 > sudo apt install python3-dev libassimp-dev libavcodec-dev libavformat-dev libavutil-dev \
 libswresample-dev libswscale-dev libharfbuzz-dev libfreetype-dev libfribidi-dev \
-libsdl3-dev libsdl3-image-dev libjpeg-dev pkg-config python3-legacy-cgi
+libsdl3-dev libsdl3-image-dev libpng-dev libjpeg-dev pkg-config python3-legacy-cgi
 
 我们强烈建议使用包管理器来创建虚拟环境和管理依赖项。我们测试过 [uv](https://docs.astral.sh/uv/)，但其他包管理器也应该可以正常工作。要创建虚拟环境并安装依赖项，右键终端并执行：
 
