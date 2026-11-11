@@ -1,7 +1,7 @@
 ### deepin编译、运行renpy
 ---
 老规矩，先安装下列依赖：
-`sudo apt update && sudo apt install python3-pip python3-dev libassimp-dev libavcodec-dev libavformat-dev libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl3-dev libsdl3-image-dev libsdl3-mixer-dev libsdl3-ttf-dev libjpeg-dev pkg-config python3-legacy-cgi`
+`sudo apt update && sudo apt install -y python3-pip python3-dev libassimp-dev libavcodec-dev libavformat-dev libswresample-dev libswscale-dev libharfbuzz-dev libfreetype6-dev libfribidi-dev libsdl3-dev libsdl3-image-dev libsdl3-mixer-dev libsdl3-ttf-dev libjpeg-dev pkg-config python3-legacy-cgi`
 > 安装了星火应用商店的用户可用**aptss**加速下载
 
 安装uv模块：
@@ -18,7 +18,7 @@
 编译完后，会自行启动renpy。
 
 若想再次启用renpy，请输入：
-`python -X utf8 renpy.py`
+`python renpy.py`
 
 ### 游戏 in renpy壳
 ---
@@ -28,11 +28,11 @@
 回到renpy文件夹，复制renpy renpy.py及动态库：
 `pushd renpy && cp -R renpy renpy.py *.so ~/Desktop/renpy-box`
 
-从pip里安装所需模块：`pip3 install setuptools cython future six typing pefile requests assimp legacy-cgi --break-system-packages`
+从pip里安装所需模块：`pip3 install setuptools cython future six typing pefile requests assimp legacy-cgi truststore --break-system-packages`
 > 速度慢？可挂镜像源加速下载：-i https://mirrors.aliyun.com/pypi/simple/
 
 就这样，一个renpy壳就此诞生。
-将game文件夹扔进renpy壳里，执行python -X utf8 renpy.py。这样游戏就能跑起来了。
+将game文件夹扔进renpy壳里，执行python renpy.py。这样游戏就能跑起来了。
 > renpy文件夹、renpy.py是常量，game是变量。
 想玩其他renpy游戏，只需删除原来的game文件夹，把新的game文件夹扔进去，再执行renpy.py即可。
 
