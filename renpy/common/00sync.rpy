@@ -75,7 +75,7 @@ init -1100 python:
 init 1100 python:
 
     if config.savedir is not None:
-        config.extra_savedirs.append(config.savedir + "/sync")
+        config.extra_savedirs.append(config.savedir) #禁止在存档目录里生成sync文件夹
     else:
         config.has_sync = None
 

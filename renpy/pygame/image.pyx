@@ -170,7 +170,7 @@ def save(surface: Surface, file: object, namehint: str = "", *, compression: int
 
         elif ext == b"BMP":
             with nogil:
-                ok = IMG_SaveBMP_IO(sdl_surface, iostream, False)
+                ok = SDL_SaveBMP_IO(sdl_surface, iostream, False)
 
         else:
             quality = 90 if quality < 0 else quality
