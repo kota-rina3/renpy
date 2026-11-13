@@ -950,23 +950,45 @@ def frequent():
     elif displayable_channels:
         update = True
 
+        # The channels that do have a frame ready. If every channel is
+        # ready we redraw all of them, as before. Otherwise we still
+        # redraw those that are ready: one slow or stalled channel used
+        # to hold every other movie at the 0.1s fallback rate scheduled
+        # by Movie.render().
+        ready = [ ]
+
         for i in displayable_channels:
             channel, mask_channel = i
 
             c = renpy.audio.audio.get_channel(channel)
             if not c.video_ready():
                 update = False
-                break
+                continue
 
             if mask_channel:
                 c = renpy.audio.audio.get_channel(mask_channel)
                 if not c.video_ready():
                     update = False
-                    break
+                    continue
+
+            ready.append(i)
 
         if update:
             for v in displayable_channels.values():
                 for j in v:
+                    renpy.display.render.redraw(j, 0.0)
+        else:
+            for i in ready:
+                channel, _mask_channel = i
+
+                # A channel that has stopped playing reports itself as
+                # ready. Redrawing it here would re-render the same frame
+                # on every pass through the main loop, so leave it to the
+                # fallback in Movie.render().
+                if not renpy.audio.music.get_playing(channel):
+                    continue
+
+                for j in displayable_channels[i]:
                     renpy.display.render.redraw(j, 0.0)
 
         return False

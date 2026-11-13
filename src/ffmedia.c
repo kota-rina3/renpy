@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stdio.h>
 
 #include "ffmedia.h"
 
@@ -133,6 +134,9 @@ static void rwops_close(SDL_IOStream *rw) {
 
 static double current_time = 0;
 
+/* Defined at the end of this file, and called from renpysound_core.c. */
+void media_advance_time(void);
+
 typedef struct PacketQueueEntry {
 	AVPacket *pkt;
 	struct PacketQueueEntry *next;
@@ -201,6 +205,12 @@ typedef struct MediaState {
 	 * and the readers and writers can do their thing.
 	 */
 	int ready;
+
+	/* Set when a reader gave up waiting for ready. No reader will block on
+	 * this stream again; if the decoder eventually catches up, the flag is
+	 * cleared and playback resumes. Protected by lock.
+	 */
+	int ready_failed; // Lock.
 
 	/* This is set to true when data has been read, in order to ask the
 	 * decode thread to produce more data.
@@ -1203,6 +1213,105 @@ void media_read_sync(struct MediaState *ms);
 void media_read_sync_finish(struct MediaState *ms);
 
 
+/* How long the main thread may block waiting for the decoder thread to
+ * finish opening a file. Set RENPY_VIDEO_READY_TIMEOUT to override this
+ * (in milliseconds); 0 restores the old wait-forever behavior.
+ */
+#ifndef __EMSCRIPTEN__
+#define READY_WAIT_TIMEOUT_MS 5000
+
+static Sint32 ready_timeout_ms(void) {
+	long timeout = READY_WAIT_TIMEOUT_MS;
+	const char *env = getenv("RENPY_VIDEO_READY_TIMEOUT");
+
+	if (env && *env) {
+		char *end;
+		long value = strtol(env, &end, 10);
+
+		/* Keep the timeout bounded so it always fits in Sint32. */
+		if (end != env && value >= 0 && value <= 60000) {
+			timeout = value;
+		}
+	}
+
+	return (Sint32) timeout;
+}
+#endif
+
+
+/**
+ * Waits for the decoder thread to finish initializing.
+ *
+ * Returns 1 once ms->ready is set, and 0 if the wait timed out. Must be
+ * called with ms->lock held - the lock is held on both return paths.
+ *
+ * The old code used an unbounded SDL_WaitCondition() loop here. If the
+ * decoder stalled (a hung IOStream, a network source, a deadlock in
+ * avformat_open_input), the main thread never woke up and the whole UI
+ * froze. ready_failed makes the failure sticky so that later calls cannot
+ * re-enter the wait, while still letting a merely slow decoder recover.
+ */
+static int wait_for_ready(MediaState *ms) {
+
+#ifdef __EMSCRIPTEN__
+	/* There is no decoder thread on this platform. */
+	return ms->ready;
+#else
+
+	/* Check this first: a timed-out stream only ever gets a non-blocking
+	 * look at ready from now on. If the decoder eventually caught up,
+	 * clear the flag and resume normal playback.
+	 */
+	if (ms->ready_failed) {
+		if (!ms->ready) {
+			return 0;
+		}
+
+		ms->ready_failed = 0;
+		return 1;
+	}
+
+	if (ms->ready) {
+		return 1;
+	}
+
+	Sint32 timeout = ready_timeout_ms();
+
+	if (!timeout) {
+		while (!ms->ready) {
+			SDL_WaitCondition(ms->cond, ms->lock);
+		}
+
+		return 1;
+	}
+
+	/* Absolute deadline: spurious wakeups and unrelated broadcasts only
+	 * cause another pass around the loop, they cannot extend the wait.
+	 */
+	Uint64 deadline = SDL_GetTicks() + (Uint64) timeout;
+
+	while (!ms->ready) {
+		Uint64 now = SDL_GetTicks();
+
+		if (now >= deadline) {
+			ms->ready_failed = 1;
+			fprintf(stderr,
+				"Ren'Py: decoder for '%s' did not become ready in %d ms; "
+				"continuing without video.\n",
+				ms->filename ? ms->filename : "(unknown)", (int) timeout);
+			fflush(stderr);
+			return 0;
+		}
+
+		/* timeout is capped at 60000 ms, so remaining always fits Sint32. */
+		SDL_WaitConditionTimeout(ms->cond, ms->lock, (Sint32) (deadline - now));
+	}
+
+	return 1;
+#endif
+}
+
+
 /**
  * Returns 1 if there is a video frame ready on this channel, or 0 otherwise.
  */
@@ -1279,7 +1388,7 @@ done:
 
 int media_read_video_yuv(MediaState *ms, MediaVideoYUV *rv) {
 	SurfaceQueueEntry *sqe = NULL;
-	double offset_time = current_time - ms->time_offset;
+	double offset_time = 0.0;
 
 	memset(rv, 0, sizeof(*rv));
 
@@ -1290,14 +1399,26 @@ int media_read_video_yuv(MediaState *ms, MediaVideoYUV *rv) {
 	SDL_LockMutex(ms->lock);
 
 #ifndef __EMSCRIPTEN__
-	while (!ms->ready) {
-		SDL_WaitCondition(ms->cond, ms->lock);
+	if (!wait_for_ready(ms)) {
+		goto done;
 	}
 #endif
 
 	if (ms->pause_time > 0 || !ms->surface_queue_size || !ms->surface_queue->yuv) {
 		goto done;
 	}
+
+	/*
+	 * Sample the clock only now: the wait above can last for the whole
+	 * decoder startup, and current_time does not advance while we are
+	 * blocked, because it is only updated by media_advance_time().
+	 * video_pts_offset is latched from this value and then used for the
+	 * rest of playback. Latching a time from before the wait would put the
+	 * video ahead by the startup latency and make decode_video() drop every
+	 * frame with a PTS below the resulting time.
+	 */
+	media_advance_time();
+	offset_time = current_time - ms->time_offset;
 
 	if (ms->video_pts_offset == 0.0) {
 		ms->video_pts_offset = offset_time - ms->surface_queue->pts;
@@ -1436,18 +1557,17 @@ SDL_Surface *media_read_video(MediaState *ms) {
 
 	SDL_Surface *rv = NULL;
 	SurfaceQueueEntry *sqe = NULL;
+	double offset_time = 0.0;
 
 	if (ms->video_stream == -1) {
 		return NULL;
 	}
 
-	double offset_time = current_time - ms->time_offset;
-
 	SDL_LockMutex(ms->lock);
 
 #ifndef __EMSCRIPTEN__
-	while (!ms->ready) {
-	    SDL_WaitCondition(ms->cond, ms->lock);
+	if (!wait_for_ready(ms)) {
+		goto done;
 	}
 #endif
 
@@ -1456,8 +1576,12 @@ SDL_Surface *media_read_video(MediaState *ms) {
 	}
 
 	if (!ms->surface_queue_size) {
-		goto done;
+	    goto done;
 	}
+
+	/* See the comment in media_read_video_yuv(). */
+	media_advance_time();
+	offset_time = current_time - ms->time_offset;
 
 	if (ms->video_pts_offset == 0.0) {
 		ms->video_pts_offset = offset_time - ms->surface_queue->pts;
@@ -1921,7 +2045,10 @@ int media_read_audio(struct MediaState *ms, Uint8 *stream, int len) {
 }
 
 int media_is_ready(struct MediaState *ms) {
-	return ms->ready;
+	/* A stream whose decoder never became ready counts as started, so
+	 * handle_synchro_start() cannot wait on it forever.
+	 */
+	return ms->ready || ms->ready_failed;
 }
 
 

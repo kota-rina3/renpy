@@ -813,7 +813,7 @@ class Script:
         # Generate translate nodes.
         renpy.translation.restructure(stmts)
 
-    def load_file(self, dir, fn):
+    def load_file(self, dir, fn, rpydigest=None):
         # Used to only find the deferred parse errors from this file.
         old_deferred_parse_errors = renpy.parser.deferred_parse_errors
         renpy.parser.deferred_parse_errors = collections.defaultdict(list)
@@ -889,8 +889,14 @@ class Script:
                             self.write_rpyc_data(f, 1, pickle_data_before_static_transforms)
                             self.write_rpyc_data(f, 2, pickle_data_after_static_transforms)
 
-                            with open(fullfn, "rb") as fullf:
-                                rpydigest = hashlib.md5(fullf.read() + RPYC_MAGIC).digest()
+                            # load_appropriate_file() has already read this
+                            # source file to compute rpydigest when deciding
+                            # whether the .rpyc is up to date. Reuse it here
+                            # rather than reading and hashing the same file a
+                            # second time.
+                            if rpydigest is None:
+                                with open(fullfn, "rb") as fullf:
+                                    rpydigest = hashlib.md5(fullf.read() + RPYC_MAGIC).digest()
 
                             self.write_rpyc_md5(f, rpydigest)
                     except Exception:
@@ -1046,7 +1052,7 @@ class Script:
                         raise
 
                 if data is None:
-                    data, stmts = self.load_file(dir, fn + source)
+                    data, stmts = self.load_file(dir, fn + source, rpydigest)
 
                 digest = rpydigest
 
@@ -1058,7 +1064,7 @@ class Script:
 
             elif os.path.exists(rpyfn):
                 lastfn = rpyfn
-                data, stmts = self.load_file(dir, fn + source)
+                data, stmts = self.load_file(dir, fn + source, rpydigest)
 
                 digest = rpydigest
 

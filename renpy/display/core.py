@@ -941,9 +941,18 @@ class Interface:
 
         renpy.main.log_clock("Interface start")
 
-        self.started = True
+        # `started` gates the call to start() in interact(), and set_mode() is
+        # the only place that assigns renpy.display.draw. Do not claim to be
+        # started until a renderer actually exists: otherwise a failed/aborted
+        # set_mode() leaves started=True with draw=None, and the next
+        # interaction dies on `None.update()` in interact_core.
+        try:
+            self.set_mode()
+        except Exception:
+            self.started = False
+            raise
 
-        self.set_mode()
+        self.started = True
 
         # Load the image fonts.
         renpy.text.font.load_fonts()
@@ -1264,7 +1273,10 @@ class Interface:
         window.
         """
 
-        if renpy.session.get("_keep_renderer", False):
+        # Only skip re-initialization when there actually is a renderer to
+        # keep. If draw is None (for example after a reload that could not
+        # restore it), the "keep" fast path would dereference None.
+        if renpy.display.draw is not None and renpy.session.get("_keep_renderer", False):
             renpy.display.render.models = renpy.display.draw.info.get("models", False)
             return
 
@@ -2234,6 +2246,14 @@ class Interface:
 
         if not self.started:
             self.start()
+        elif renpy.display.draw is None:
+            # An utter restart (Shift+R / renpy.utter_restart) tears the
+            # renderer down in reload_all() without necessarily rebuilding
+            # this Interface. Recover by running the full display startup
+            # again instead of dereferencing None in interact_core.
+            renpy.display.log.write("Renderer missing at interaction start, restarting display.")
+            self.started = False
+            self.start()
 
         if self.clear_screenshot:
             self.lose_screenshot()
@@ -3067,6 +3087,17 @@ class Interface:
                     needs_redraw = True
                     video_frame_drawn = True
 
+                # playing() takes the global audio lock once for the movie
+                # channel and once per displayable channel. Cache it per loop
+                # iteration, but keep it lazy: most frames short-circuit
+                # before any of the checks below needs it.
+                playing_cache = []
+
+                def video_playing():
+                    if not playing_cache:
+                        playing_cache.append(renpy.display.video.playing())
+                    return playing_cache[0]
+
                 if renpy.display.render.check_redraws():
                     needs_redraw = True
 
@@ -3089,7 +3120,7 @@ class Interface:
                     needs_redraw
                     or (not can_block)
                     or self.mouse_move
-                    or renpy.display.video.playing()
+                    or video_playing()
                     or redraw_time is not None
                 ):
                     redraw_time = max(redraw_time or 0, earliest_redraw_time)
@@ -3135,16 +3166,25 @@ class Interface:
                         old_timeout_time = self.timeout_time
 
                 # Process the invoke queue.
+                had_invokes = False
+
                 while self.invoke_queue:
+                    had_invokes = True
                     fn, args, kwargs = self.invoke_queue.pop(0)
                     rv = fn(*args, **kwargs)
                     if rv is not None:
                         return False, rv
 
+                # A callback queued with invoke_in_main_thread may have
+                # started or stopped a movie, so discard the cached value
+                # before the remaining decisions sample the state again.
+                if had_invokes:
+                    playing_cache.clear()
+
                 # Decide to run prediction.
                 if did_redraw and (can_block or (frame >= renpy.config.idle_frame) or (self.force_prediction)):
                     expensive = not (
-                        needs_redraw or (_redraw_in < 0.2) or (_timeout_in < 0.2) or renpy.display.video.playing()
+                        needs_redraw or (_redraw_in < 0.2) or (_timeout_in < 0.2) or video_playing()
                     ) or self.force_prediction
 
                     self.run_tasks(expensive)
@@ -3154,7 +3194,7 @@ class Interface:
                     renpy.plog(1, "pre framerate limit wait")
                     ev = self.event_wait()
                     renpy.plog(1, "post framerate limit wait {!r}", ev)
-                elif needs_redraw or (not can_block) or self.mouse_move or renpy.display.video.playing():
+                elif needs_redraw or (not can_block) or self.mouse_move or video_playing():
                     renpy.plog(1, "pre event poll")
                     ev = self.event_poll()
                     renpy.plog(1, "post event poll {!r}", ev)

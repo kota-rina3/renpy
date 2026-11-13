@@ -174,6 +174,12 @@ emscripten: bool = False
 # Should we enable experimental features and debugging?
 experimental = "RENPY_EXPERIMENTAL" in os.environ
 
+# Should the reload backup check every module global for picklability on
+# startup? Normally this is only done when pickling the backup fails, which
+# is the only time the "Cannot pickle renpy.x = ..." diagnostic is useful.
+# Set RENPY_DEBUG_PICKLE to run the full check on every startup as well.
+debug_pickle = "RENPY_DEBUG_PICKLE" in os.environ
+
 if platform.win32_ver()[0]:
     windows = True
 elif os.environ.get("RENPY_PLATFORM", "").startswith("ios"):
@@ -312,7 +318,21 @@ class Backup:
             self.backup_module(m)
 
         # A pickled version of self.objects.
-        self.objects_pickle = pickle.dumps(self.objects, highest=True)
+        try:
+            self.objects_pickle = pickle.dumps(self.objects, highest=True)
+        except Exception:
+            # Locate the offending module globals before re-raising. This
+            # preserves the "Cannot pickle renpy.x = ..." diagnostic that
+            # used to be printed for every variable on every startup.
+            try:
+                self.diagnose_unpicklable()
+            except Exception as e:
+                print("Pickle diagnosis failed:", repr(e))
+
+            raise
+
+        if debug_pickle:
+            self.diagnose_unpicklable()
 
         self.objects = {}
 
@@ -355,13 +375,25 @@ class Backup:
             self.variables[mod, k] = idv
             self.objects[idv] = v
 
-            # If we have a problem pickling things, uncomment the next block.
+    def diagnose_unpicklable(self):
+        """
+        Prints a diagnostic for each module global that cannot be pickled.
+        Called when backup() fails to pickle self.objects, or on every
+        startup when RENPY_DEBUG_PICKLE is set.
+        """
+
+        for (mod, k), idv in self.variables.items():
+            v = self.objects[idv]
 
             try:
                 pickle.dumps(v, highest=True)
             except Exception:
-                print("Cannot pickle", name + "." + k, "=", repr(v))
-                print("Reduce Ex is:", repr(v.__reduce_ex__(pickle.PROTOCOL)))
+                print("Cannot pickle", mod.__name__ + "." + k, "=", repr(v))
+
+                try:
+                    print("Reduce Ex is:", repr(v.__reduce_ex__(pickle.PROTOCOL)))
+                except Exception as e:
+                    print("Reduce Ex failed:", repr(e))
 
     def restore(self):
         """
@@ -699,7 +731,12 @@ def reload_all():
     renpy.display.render.screen_render = None
     renpy.display.render.mark_sweep()
 
-    # Get rid of the draw module and interface.
+    # Get rid of the draw module and interface. Both aliases must be cleared:
+    # main.main() checks renpy.game.interface to decide whether to create a
+    # fresh Interface (and hence re-run Interface.start() / set_mode()). If it
+    # survives the reload, its `started` flag is still True while the renderer
+    # has just been torn down, so no new renderer is ever installed.
+    renpy.game.interface = None
     renpy.display.interface = None
 
     if not renpy.session.get("_keep_renderer", False):

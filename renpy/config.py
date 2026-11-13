@@ -1135,6 +1135,18 @@ touch_keyboard = os.environ.get("RENPY_TOUCH_KEYBOARD", False)
 max_texture_size = (4096, 4096)
 fbo_size = max_texture_size
 
+# When set to (width, height), the scene is always rendered at this
+# internal resolution into an intermediate FBO, then scaled to the
+# display. This decouples render resolution from display resolution.
+# When None (the default), the scene renders directly at the drawable
+# resolution.
+fixed_resolution = (1280, 720) # Game Compat
+
+# The texture filter used when scaling from fixed_resolution to the
+# display. "linear" for smooth bilinear scaling (default),
+# "nearest" for pixel-art style crisp scaling.
+fixed_resolution_filter = "linear" # Game Compat
+
 # Names to ignore the redefinition of.
 lint_ignore_redefine = ["gui.about"]
 

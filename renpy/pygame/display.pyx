@@ -529,6 +529,12 @@ cdef class Window:
     def set_position(self, pos):
         SDL_SetWindowPosition(self.window, pos[0], pos[1])
 
+    def set_always_on_top(self, on_top):
+        SDL_SetWindowAlwaysOnTop(self.window, bool(on_top))
+
+    def get_always_on_top(self):
+        return bool(SDL_GetWindowFlags(self.window) & SDL_WINDOW_ALWAYS_ON_TOP)
+
 
 
 # The icon that's used for new windows.
@@ -884,6 +890,16 @@ def get_position():
 def set_position(pos):
     if main_window:
         return main_window.set_position(pos)
+    return False
+
+def set_always_on_top(on_top):
+    if main_window:
+        return main_window.set_always_on_top(bool(on_top))
+    return False
+
+def get_always_on_top():
+    if main_window:
+        return main_window.get_always_on_top()
     return False
 
 

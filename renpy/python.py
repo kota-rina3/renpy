@@ -874,8 +874,18 @@ class CompileCache:
             with renpy.loader.load(CompileCache.BYTECODE_FILE) as f:
                 version, cache = loads(zlib.decompress(f.read()))
                 if version == CompileCache.BYTECODE_VERSION:
-                    self.old_bytecode_cache = {k: v for k, v in cache.items() if k[0] != "warnings"}
-                    self.warnings = {k: v for k, v in cache.items() if k[0] == "warnings"}
+                    # Partition the unpickled dict in place instead of rebuilding
+                    # it into two new dicts. save() only writes CacheKey and
+                    # ("warnings", CacheKey) keys, so this produces the same two
+                    # dictionaries, with the same insertion order, as the former
+                    # pair of comprehensions did.
+                    warnings_cache = {k: v for k, v in cache.items() if k[0] == "warnings"}
+
+                    for k in warnings_cache:
+                        del cache[k]
+
+                    self.old_bytecode_cache = cache
+                    self.warnings = warnings_cache
         except Exception:
             pass
 
